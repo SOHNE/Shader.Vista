@@ -1,6 +1,6 @@
 {
-  "name": "shader.vista",
-  "version": "0.1.0",
+  "name": "@sohne/shader.vista",
+  "version": "0.0.1",
   "description": "A versatile WebGL renderer designed with multipass support in mind.",
   "main": "dist/renderer.js",
   "types": "dist/renderer.d.ts",
