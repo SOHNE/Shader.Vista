@@ -1,0 +1,22 @@
+{
+  "name": "shader.vista",
+  "version": "0.1.0",
+  "description": "A versatile WebGL renderer designed with multipass support in mind.",
+  "main": "dist/renderer.js",
+  "types": "dist/renderer.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "shader",
+    "glsl",
+    "multipass"
+  ],
+  "author": "SOHNE",
+  "license": "GPL-3.0",
+  "devDependencies": {
+    "@types/webgl2": "^0.0.11",
+    "typescript": "^5.5.2"
+  }
+}
