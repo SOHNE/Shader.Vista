@@ -123,7 +123,7 @@ For more advanced usage, such as adding multiple passes and using textures, refe
 Contributions are welcome! Please open an issue or submit a pull request on GitHub.
 
 [//]:  (Externals)
-[npm-image]: https://img.shields.io/npm/v/@sohne/shader.vista.svg?style=flat-square&logo=react
+[npm-image]: https://img.shields.io/npm/v/@sohne/shader.vista.svg?style=flat-square&logo=npm
 [npm-url]: https://npmjs.org/package/@sohne/shader.vista
 [npm-downloads-image]: https://img.shields.io/npm/dm/@sohne/shader.vista.svg
 [npm-downloads-url]: https://npmcharts.com/compare/@sohne/shader.vista?minimal=true
