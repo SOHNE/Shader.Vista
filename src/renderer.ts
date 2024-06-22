@@ -232,8 +232,6 @@ export default class WebGLRenderer {
 
       current = current.next;
     }
-
-    requestAnimationFrame(this.render);
   };
 
   setup(config: any) {
