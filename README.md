@@ -2,6 +2,7 @@
 # SOHNE | Shader.Vista
 
 [![NPM version][npm-image]][npm-url]
+[![PR Welcome][npm-downloads-image]][npm-downloads-url]
 
 `Shader.Vista` is a lightweight WebGL rendering library designed to make it easy to work with WebGL fragment shaders, passes, and textures. It integrates seamlessly with React for modern web development.
 
@@ -124,4 +125,6 @@ Contributions are welcome! Please open an issue or submit a pull request on GitH
 [//]:  (Externals)
 [npm-image]: https://img.shields.io/npm/v/@sohne/shader.vista.svg?style=flat-square&logo=react
 [npm-url]: https://npmjs.org/package/@sohne/shader.vista
+[npm-downloads-image]: https://img.shields.io/npm/dm/@sohne/shader.vista.svg
+[npm-downloads-url]: https://npmcharts.com/compare/@sohne/shader.vista?minimal=true
 [//]:  (EOF)
