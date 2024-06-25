@@ -1,6 +1,6 @@
 {
   "name": "@sohne/shader.vista",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "A versatile WebGL renderer designed with multipass support in mind.",
   "main": "dist/renderer.js",
   "types": "dist/renderer.d.ts",
@@ -19,7 +19,8 @@
   "keywords": [
     "shader",
     "glsl",
-    "multipass"
+    "multipass",
+    "canvas"
   ],
   "author": "SOHNE",
   "license": "GPL-3.0",
