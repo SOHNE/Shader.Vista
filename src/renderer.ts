@@ -1,25 +1,54 @@
-import Pass from "./pass";
-import Shader from "./shader";
+import Pass from './pass';
+import Shader from './shader';
+
+export interface PassConfig {
+  name: string;
+  fragmentShader: string;
+  vertexShader?: string;
+  offscreen?: boolean;
+  textures: string[];
+}
+
+export interface RendererConfig {
+  passes: PassConfig[];
+  textures?: string[];
+}
 
 export default class WebGLRenderer {
-  gl: WebGLRenderingContext;
-  passes: Pass | null;
-  canvas: HTMLCanvasElement;
-  mouseX: number;
-  mouseY: number;
-  timeDelta: number;
-  lastTime: number;
-  realToCSSPixels: number;
-  paused: boolean;
-  resetTime: boolean;
-  accumulatedTime: number;
-  pauseStartTime: number;
-  totalPauseDuration: number;
-  textureMap: { [key: string]: WebGLTexture };
+  private gl: WebGLRenderingContext;
+  private passes: Pass | null = null;
+  private canvas: HTMLCanvasElement;
+  private textureMap: { [key: string]: WebGLTexture } = {};
+  private now: Date;
+
+  public mouseX: number = 0;
+  public mouseY: number = 0;
+  public time: number = 0;
+  public timeDelta: number = 0;
+  public realToCSSPixels: number = window.devicePixelRatio || 1;
+  public paused: boolean = false;
+  public playbackTime: number = 0;
+  public lastTime: number = 0;
+  public frameRate: number = 0;
+  public currentFrame: number = 0;
+  public currentTime: number = 0;
+  public startTime: number = 0;
 
   constructor(canvas: HTMLCanvasElement) {
-    console.log("Constructor");
     this.canvas = canvas;
+    this.gl = this.initializeWebGLContext(canvas);
+    this.initMouseEvents();
+    window.addEventListener(
+      'resize',
+      this.resizeCanvasToDisplaySize.bind(this)
+    );
+    this.now = new Date();
+    //requestAnimationFrame(this.render.bind(this));
+  }
+
+  private initializeWebGLContext(
+    canvas: HTMLCanvasElement
+  ): WebGLRenderingContext {
     const opts = {
       alpha: false,
       depth: false,
@@ -27,64 +56,63 @@ export default class WebGLRenderer {
       premultipliedAlpha: false,
       antialias: false,
       preserveDrawingBuffer: false,
-      powerPreference: "high-performance",
+      powerPreference: 'high-performance',
     };
-    let gl: RenderingContext | null = null;
-    if (gl === null) gl = canvas.getContext("webgl2", opts);
-    if (gl === null) gl = canvas.getContext("experimental-webgl2", opts);
-    if (gl === null) gl = canvas.getContext("webgl", opts);
-    if (gl === null) gl = canvas.getContext("experimental-webgl", opts);
+
+    const gl =
+      canvas.getContext('webgl2', opts) ||
+      canvas.getContext('experimental-webgl2', opts) ||
+      canvas.getContext('webgl', opts) ||
+      canvas.getContext('experimental-webgl', opts);
 
     if (!gl) {
-      throw new Error("WebGL not supported");
+      throw new Error('WebGL not supported');
     }
 
-    this.gl = <WebGLRenderingContext>gl;
-    this.passes = null;
-    this.mouseX = 0;
-    this.mouseY = 0;
-    this.timeDelta = 0;
-    this.lastTime = 0;
-    this.realToCSSPixels = window.devicePixelRatio || 1;
-    this.paused = false;
-    this.resetTime = false;
-    this.accumulatedTime = 0;
-    this.pauseStartTime = 0;
-    this.totalPauseDuration = 0;
-    this.textureMap = {};
-
-    this.initMouseEvents();
-    window.addEventListener('resize', this.resizeCanvasToDisplaySize.bind(this));
+    return gl as WebGLRenderingContext;
   }
 
-  initMouseEvents() {
-    this.canvas.addEventListener("mousemove", this.setMousePosition.bind(this));
-    this.canvas.addEventListener("touchstart", this.preventDefault, {
+  private initMouseEvents(): void {
+    this.canvas.addEventListener('mousemove', this.setMousePosition.bind(this));
+    this.canvas.addEventListener('touchstart', this.preventDefault, {
       passive: false,
     });
-    this.canvas.addEventListener("touchmove", this.handleTouchMove.bind(this), {
+    this.canvas.addEventListener('touchmove', this.handleTouchMove.bind(this), {
       passive: false,
     });
   }
 
-  setMousePosition(e: MouseEvent | Touch) {
+  private setMousePosition(e: MouseEvent | Touch): void {
+    const mouse = {
+      x: e.clientX || e.pageX,
+      y: e.clientY || e.pageY,
+    };
+
     const rect = this.canvas.getBoundingClientRect();
-    this.mouseX = e.clientX - rect.left;
-    this.mouseY = rect.height - (e.clientY - rect.top) - 1;
+    if (
+      mouse.x >= rect.left &&
+      mouse.x <= rect.right &&
+      mouse.y >= rect.top &&
+      mouse.y <= rect.bottom
+    ) {
+      this.mouseX = (mouse.x - rect.left) * this.realToCSSPixels;
+      this.mouseY =
+        this.canvas.height - (mouse.y - rect.top) * this.realToCSSPixels;
+    }
   }
 
-  handleTouchMove(e: TouchEvent) {
+  private handleTouchMove(e: TouchEvent): void {
     e.preventDefault();
     if (e.touches.length > 0) {
       this.setMousePosition(e.touches[0]);
     }
   }
 
-  preventDefault(e: Event) {
+  private preventDefault(e: Event): void {
     e.preventDefault();
   }
 
-  addPass(pass: Pass) {
+  public addPass(pass: Pass): void {
     if (this.passes) {
       let current = this.passes;
       while (current.next) {
@@ -96,7 +124,7 @@ export default class WebGLRenderer {
     }
   }
 
-  resizeCanvasToDisplaySize() {
+  private resizeCanvasToDisplaySize(): void {
     const displayWidth = Math.floor(
       this.canvas.clientWidth * this.realToCSSPixels
     );
@@ -113,130 +141,69 @@ export default class WebGLRenderer {
 
       let current = this.passes;
       while (current) {
-        current.width = displayWidth;
-        current.height = displayHeight;
-
-        if (current.offscreen) {
-          this.gl.bindTexture(this.gl.TEXTURE_2D, current.texture);
-          this.gl.texImage2D(
-            this.gl.TEXTURE_2D,
-            0,
-            this.gl.RGBA,
-            displayWidth,
-            displayHeight,
-            0,
-            this.gl.RGBA,
-            this.gl.UNSIGNED_BYTE,
-            null
-          );
-        }
-
+        current.resize(displayWidth, displayHeight);
         current = current.next;
       }
     }
   }
 
-  render = (time: number) => {
-    time *= 0.001; // convert to seconds
+  private updateUniforms(pass: Pass): void {
+    pass.shader.setUniform('u_date', '4fv', [
+      this.now.getFullYear(),
+      this.now.getMonth() + 1,
+      this.now.getDate(),
+      this.now.getHours() * 3600 +
+        this.now.getMinutes() * 60 +
+        this.now.getSeconds() +
+        this.now.getMilliseconds() / 1000,
+    ]);
 
-    if (this.resetTime) {
-      this.lastTime = time;
-      this.accumulatedTime = 0;
-      this.resetTime = false;
-      this.totalPauseDuration = 0;
-    } else if (this.paused) {
-      this.pauseStartTime = time;
-    } else {
-      if (this.pauseStartTime) {
-        this.totalPauseDuration += time - this.pauseStartTime;
-        this.pauseStartTime = 0;
-      }
-      this.timeDelta = time - this.lastTime;
-      this.lastTime = time;
-      this.accumulatedTime += this.timeDelta;
+    pass.shader.setUniform('u_frame', '1i', this.currentFrame);
+    pass.shader.setUniform('u_time', '1f', this.currentTime);
+    pass.shader.setUniform('u_timeDelta', '1f', this.timeDelta);
+    pass.shader.setUniform('u_frameRate', '1f', this.frameRate);
+
+    pass.shader.setUniform('u_resolution', '2fv', [pass.width, pass.height]);
+
+    pass.shader.setUniform('u_mouse', '2fv', [this.mouseX, this.mouseY]);
+  }
+
+  private updateTime(currentTime: number): void {
+    if (this.paused) {
+      this.timeDelta = 0;
+      return;
     }
 
+    if (this.lastTime === 0) {
+      this.lastTime = currentTime;
+    }
+
+    {
+      const t = performance.now();
+      this.timeDelta = (t - this.startTime) / 1000.0;
+      this.currentTime += this.timeDelta;
+      this.frameRate = 1.0 / this.timeDelta;
+      this.currentFrame++;
+      this.startTime = t;
+    }
+  }
+
+  public render(currentTime: number): void {
+    this.updateTime(currentTime);
     this.resizeCanvasToDisplaySize();
 
     let current = this.passes;
     while (current) {
       current.use();
-
-      const positionAttributeLocation =
-        current.shader.getAttribLocation("a_position");
-      const resolutionLocation =
-        current.shader.getUniformLocation("u_resolution");
-      const mouseLocation = current.shader.getUniformLocation("u_mouse");
-      const timeLocation = current.shader.getUniformLocation("u_time");
-      const timeDeltaLocation =
-        current.shader.getUniformLocation("u_timeDelta");
-
-      const positionBuffer = this.gl.createBuffer();
-      this.gl.bindBuffer(this.gl.ARRAY_BUFFER, positionBuffer);
-      this.gl.bufferData(
-        this.gl.ARRAY_BUFFER,
-        new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]),
-        this.gl.STATIC_DRAW
-      );
-
-      this.gl.enableVertexAttribArray(positionAttributeLocation);
-      this.gl.bindBuffer(this.gl.ARRAY_BUFFER, positionBuffer);
-      this.gl.vertexAttribPointer(
-        positionAttributeLocation,
-        2,
-        this.gl.FLOAT,
-        false,
-        0,
-        0
-      );
-
-      this.gl.uniform2f(
-        resolutionLocation,
-        this.gl.canvas.width,
-        this.gl.canvas.height
-      );
-
-      if (mouseLocation !== -1) {
-        this.gl.uniform2f(mouseLocation, this.mouseX, this.mouseY);
-      }
-
-      if (timeLocation !== -1) {
-        this.gl.uniform1f(
-          timeLocation,
-          this.accumulatedTime - this.totalPauseDuration
-        );
-      }
-
-      if (timeDeltaLocation !== -1) {
-        this.gl.uniform1f(timeDeltaLocation, this.timeDelta);
-      }
-
-      // Bind multiple textures
-      current.textures.forEach((texture, index) => {
-        if (current) {
-          const textureLocation = current.shader.getUniformLocation(
-            `u_texture${index}`
-          );
-          if (textureLocation !== -1) {
-            this.gl.activeTexture(
-              this.gl.TEXTURE0 + index
-              // [`TEXTURE${index}` as keyof WebGLRenderingContext]
-            );
-            this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
-            this.gl.uniform1i(textureLocation, index);
-          }
-        }
-      });
-
-      this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
-
+      this.updateUniforms(current);
+      current.draw();
       current = current.next;
     }
-  };
 
-  setup(config: any) {
-    console.log("Setup");
+    //requestAnimationFrame(this.render.bind(this));
+  }
 
+  public setup(config: RendererConfig): void {
     const displayWidth = Math.floor(
       this.canvas.clientWidth * this.realToCSSPixels
     );
@@ -244,14 +211,15 @@ export default class WebGLRenderer {
       this.canvas.clientHeight * this.realToCSSPixels
     );
 
-    config.passes.forEach((passConfig: any) => {
+    config.passes.forEach((passConfig: PassConfig) => {
       try {
         const shader = new Shader(
           this.gl,
           passConfig.vertexShader,
           passConfig.fragmentShader
         );
-        const offscreen = passConfig.name !== "MainBuffer";
+        const offscreen =
+          passConfig.offscreen || passConfig.name !== 'MainBuffer';
         const pass = new Pass(
           this.gl,
           shader,
@@ -273,26 +241,19 @@ export default class WebGLRenderer {
     });
   }
 
-  play() {
-    if (this.paused) {
-      this.paused = false;
-      this.totalPauseDuration +=
-        performance.now() * 0.001 - this.pauseStartTime;
-      this.pauseStartTime = 0;
-    }
+  public play(): void {
+    this.paused = false;
+    requestAnimationFrame(this.render.bind(this));
   }
 
-  pause() {
-    if (!this.paused) {
-      this.paused = true;
-      this.pauseStartTime = performance.now() * 0.001;
-    }
+  public pause(): void {
+    this.paused = true;
   }
 
-  reset() {
-    this.resetTime = true;
-    this.accumulatedTime = 0;
-    this.totalPauseDuration = 0;
-    this.pauseStartTime = 0;
+  public reset(): void {
+    this.playbackTime = 0;
+    this.currentFrame = 0;
+    this.lastTime = 0;
+    this.frameRate = 0;
   }
 }
