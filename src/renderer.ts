@@ -55,7 +55,7 @@ export default class WebGLRenderer {
       stencil: false,
       premultipliedAlpha: false,
       antialias: false,
-      preserveDrawingBuffer: false,
+      preserveDrawingBuffer: true,
       powerPreference: 'high-performance',
     };
 
