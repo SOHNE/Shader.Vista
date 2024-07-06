@@ -249,6 +249,7 @@ export default class WebGLRenderer {
         // Map this pass's texture to its name
         this.textureMap[passConfig.name] = pass.texture;
       } catch (error) {
+        //@ts-ignore
         console.error(`Error in pass ${passConfig.name}: ${error.message}`);
       }
     });
