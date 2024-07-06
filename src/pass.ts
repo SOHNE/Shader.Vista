@@ -45,20 +45,26 @@ export default class Pass {
       this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
       this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
     }
+  }
 
-    this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+  resize(width: number, height: number) {
+    this.width = width;
+    this.height = height;
+    if (this.offscreen) {
+      this.texture = this.createTexture() as WebGLTexture;
+      this.framebuffer = this.createFramebuffer(
+        this.texture
+      ) as WebGLFramebuffer;
+    }
   }
 
   draw() {
-    this.use();
-
-    this.textures.forEach((texture, index) => {
-      this.gl.activeTexture(this.gl.TEXTURE0 + index);
-      this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
-      this.shader.setUniform(`u_texture${index}`, '1i', index);
-    });
+    const positions = new Float32Array([
+      -1.0, -1.0, 1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0,
+    ]);
 
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.positionBuffer);
+    this.gl.bufferData(this.gl.ARRAY_BUFFER, positions, this.gl.STATIC_DRAW);
     this.gl.enableVertexAttribArray(this.positionAttributeLocation);
     this.gl.vertexAttribPointer(
       this.positionAttributeLocation,
@@ -69,67 +75,18 @@ export default class Pass {
       0
     );
 
-    this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
+    this.textures.forEach((texture, index) => {
+      this.gl.activeTexture(this.gl.TEXTURE0 + index);;
+      this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
+      this.shader.setUniform(`u_texture${index}`, '1i', index);
+    });
+
+    this.gl.drawArrays(this.gl.TRIANGLES, 0, positions.length / 2);
   }
 
-  resize(width: number, height: number) {
-    this.width = width;
-    this.height = height;
-
-    this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture);
-    this.gl.texImage2D(
-      this.gl.TEXTURE_2D,
-      0,
-      this.gl.RGBA,
-      this.width,
-      this.height,
-      0,
-      this.gl.RGBA,
-      this.gl.UNSIGNED_BYTE,
-      null
-    );
-
-    this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, this.framebuffer);
-    this.gl.framebufferTexture2D(
-      this.gl.FRAMEBUFFER,
-      this.gl.COLOR_ATTACHMENT0,
-      this.gl.TEXTURE_2D,
-      this.texture,
-      0
-    );
-
-    const status = this.gl.checkFramebufferStatus(this.gl.FRAMEBUFFER);
-    if (status !== this.gl.FRAMEBUFFER_COMPLETE) {
-      throw new Error(`Framebuffer not complete: ${status.toString()}`);
-    }
-
-    this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
-  }
-
-  createTexture() {
+  private createTexture() {
     const texture = this.gl.createTexture();
     this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
-    this.gl.texImage2D(
-      this.gl.TEXTURE_2D,
-      0,
-      this.gl.RGBA,
-      this.width,
-      this.height,
-      0,
-      this.gl.RGBA,
-      this.gl.UNSIGNED_BYTE,
-      null
-    );
-    this.gl.texParameteri(
-      this.gl.TEXTURE_2D,
-      this.gl.TEXTURE_MIN_FILTER,
-      this.gl.LINEAR
-    );
-    this.gl.texParameteri(
-      this.gl.TEXTURE_2D,
-      this.gl.TEXTURE_MAG_FILTER,
-      this.gl.LINEAR
-    );
     this.gl.texParameteri(
       this.gl.TEXTURE_2D,
       this.gl.TEXTURE_WRAP_S,
@@ -140,10 +97,31 @@ export default class Pass {
       this.gl.TEXTURE_WRAP_T,
       this.gl.CLAMP_TO_EDGE
     );
+    this.gl.texParameteri(
+      this.gl.TEXTURE_2D,
+      this.gl.TEXTURE_MIN_FILTER,
+      this.gl.NEAREST
+    );
+    this.gl.texParameteri(
+      this.gl.TEXTURE_2D,
+      this.gl.TEXTURE_MAG_FILTER,
+      this.gl.NEAREST
+    );
+    this.gl.texImage2D(
+      this.gl.TEXTURE_2D,
+      0,
+      this.gl.RGBA,
+      this.width,
+      this.height,
+      0,
+      this.gl.RGBA,
+      this.gl.UNSIGNED_BYTE,
+      null
+    );
     return texture;
   }
 
-  createFramebuffer(texture: WebGLTexture) {
+  private createFramebuffer(texture: WebGLTexture) {
     const framebuffer = this.gl.createFramebuffer();
     this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, framebuffer);
     this.gl.framebufferTexture2D(
@@ -153,22 +131,14 @@ export default class Pass {
       texture,
       0
     );
-    const status = this.gl.checkFramebufferStatus(this.gl.FRAMEBUFFER);
-    if (status !== this.gl.FRAMEBUFFER_COMPLETE) {
-      throw new Error(`Framebuffer not complete: ${status.toString()}`);
-    }
     this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
     return framebuffer;
   }
 
-  createPositionBuffer() {
-    const positionBuffer = this.gl.createBuffer();
-    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, positionBuffer);
-    this.gl.bufferData(
-      this.gl.ARRAY_BUFFER,
-      new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]),
-      this.gl.STATIC_DRAW
-    );
-    return positionBuffer;
+  private createPositionBuffer() {
+    const buffer = this.gl.createBuffer();
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, buffer);
+    return buffer;
   }
 }
+

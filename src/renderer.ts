@@ -11,15 +11,19 @@ export interface PassConfig {
 
 export interface RendererConfig {
   passes: PassConfig[];
-  textures?: string[];
 }
 
 export default class WebGLRenderer {
   private gl: WebGLRenderingContext;
   private passes: Pass | null = null;
   private canvas: HTMLCanvasElement;
+  private animationRequestID: number;
   private textureMap: { [key: string]: WebGLTexture } = {};
   private now: Date;
+  private onError: (details: {
+    passName: string;
+    coords: { line: number; message: string };
+  }) => void;
 
   public mouseX: number = 0;
   public mouseY: number = 0;
@@ -34,8 +38,15 @@ export default class WebGLRenderer {
   public currentTime: number = 0;
   public startTime: number = 0;
 
-  constructor(canvas: HTMLCanvasElement) {
+  constructor(
+    canvas: HTMLCanvasElement,
+    onError: (details: {
+      passName: string;
+      coords: { line: number; message: string };
+    }) => void
+  ) {
     this.canvas = canvas;
+    this.animationRequestID = -1;
     this.gl = this.initializeWebGLContext(canvas);
     this.initMouseEvents();
     window.addEventListener(
@@ -43,7 +54,7 @@ export default class WebGLRenderer {
       this.resizeCanvasToDisplaySize.bind(this)
     );
     this.now = new Date();
-    //requestAnimationFrame(this.render.bind(this));
+    this.onError = onError;
   }
 
   private initializeWebGLContext(
@@ -200,7 +211,8 @@ export default class WebGLRenderer {
       current = current.next;
     }
 
-    //requestAnimationFrame(this.render.bind(this));
+    // FIX: Placed here just to maintin a render loop. Must be redone later.
+    this.animationRequestID = requestAnimationFrame(this.render.bind(this));
   }
 
   public setup(config: RendererConfig): void {
@@ -216,7 +228,9 @@ export default class WebGLRenderer {
         const shader = new Shader(
           this.gl,
           passConfig.vertexShader,
-          passConfig.fragmentShader
+          passConfig.fragmentShader,
+          this.onError,
+          passConfig.name
         );
         const offscreen =
           passConfig.offscreen || passConfig.name !== 'MainBuffer';
@@ -235,7 +249,6 @@ export default class WebGLRenderer {
         // Map this pass's texture to its name
         this.textureMap[passConfig.name] = pass.texture;
       } catch (error) {
-        //@ts-ignore
         console.error(`Error in pass ${passConfig.name}: ${error.message}`);
       }
     });
@@ -243,11 +256,12 @@ export default class WebGLRenderer {
 
   public play(): void {
     this.paused = false;
-    requestAnimationFrame(this.render.bind(this));
+    this.animationRequestID = requestAnimationFrame(this.render.bind(this));
   }
 
   public pause(): void {
     this.paused = true;
+    cancelAnimationFrame(this.animationRequestID);
   }
 
   public reset(): void {
@@ -257,3 +271,4 @@ export default class WebGLRenderer {
     this.frameRate = 0;
   }
 }
+
