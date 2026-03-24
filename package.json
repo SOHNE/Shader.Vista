@@ -1,49 +1,25 @@
 {
-  "name": "@sohne/shader.vista",
+  "name": "@sohne/shader.vista-monorepo",
   "version": "26.3.0",
-  "description": "A versatile WebGL renderer designed with multipass support in mind.",
-  "author": "SOHNE",
-  "license": "GPL-3.0",
-  "keywords": [
-    "shader",
-    "glsl",
-    "multipass",
-    "canvas"
-  ],
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
-    }
-  },
-  "main": "dist/index.cjs",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "private": true,
+  "packageManager": "pnpm@10.32.1",
+  "description": "Monorepo for Shader.Vista",
   "scripts": {
-    "build": "rollup -c",
-    "dev": "rollup -c -w",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "pnpm -r --filter \"./packages-engine/**\" build",
+    "dev": "pnpm -r --filter \"./packages-engine/**\" dev",
+    "docs": "pnpm -C docs run docs:dev",
+    "play": "npm -C playground run dev",
+    "test": "pnpm -r test",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "prepare": "husky"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:dev-tools",
-    "@rollup/plugin-commonjs": "catalog:build",
-    "@rollup/plugin-node-resolve": "catalog:build",
-    "@rollup/plugin-typescript": "catalog:build",
-    "@types/webgl2": "catalog:types",
     "eslint": "catalog:dev-tools",
     "eslint-plugin-format": "catalog:dev-tools",
     "husky": "catalog:dev-tools",
     "lint-staged": "catalog:dev-tools",
-    "rollup": "catalog:build",
-    "rollup-plugin-dts": "catalog:build",
-    "tslib": "catalog:core",
     "typescript": "catalog:build"
   },
   "lint-staged": {

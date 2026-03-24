@@ -1,9 +1,8 @@
-shellEmulator: true
-
-trustPolicy: no-downgrade
-
 packages:
-  - .
+  - 'packages-engine/*'
+  - docs
+  - playground
+  - 'examples/*'
 
 catalogs:
   build:
@@ -12,6 +11,8 @@ catalogs:
     '@rollup/plugin-typescript': ^12.3.0
     rollup: ^4.60.0
     rollup-plugin-dts: ^6.4.1
+    tsdown: ^0.21.4
+
     typescript: ^6.0.2
   core:
     tslib: ^2.8.1

@@ -32,6 +32,8 @@ export default await antfu(
       'node/no-process-env': 'off',
 
       'antfu/no-top-level-await': ['off'],
+      'pnpm/yaml-enforce-settings': 'off',
+      'pnpm/yaml-no-unused-catalog-item': 'off',
       'unicorn/filename-case': ['error', {
         case: 'pascalCase',
         ignore: ['^[^/]+$'],
