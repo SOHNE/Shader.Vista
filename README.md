@@ -1,4 +1,3 @@
-
 # SOHNE | Shader.Vista
 
 [![NPM version][npm-image]][npm-url]
@@ -32,21 +31,21 @@ yarn add @sohne/shader.vista
 
 Here’s a simple example to get you started:
 
-```typescript
-import React, { useRef, useEffect } from 'react';
-import WebGLRenderer from '@sohne/shader.vista';
+```tsx
+import WebGLRenderer from '@sohne/shader.vista'
+import React, { useEffect, useRef } from 'react'
 
 // Main React functional component
-const App = () => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);  // Reference to the canvas element
-  const rendererRef = useRef<WebGLRenderer>();  // Reference to the WebGL renderer
+function App() {
+  const canvasRef = useRef<HTMLCanvasElement>(null) // Reference to the canvas element
+  const rendererRef = useRef<WebGLRenderer>() // Reference to the WebGL renderer
 
   useEffect(() => {
-    rendererRef.current = new WebGLRenderer(canvasRef.current);  // Initialize the renderer with the canvas element
+    rendererRef.current = new WebGLRenderer(canvasRef.current) // Initialize the renderer with the canvas element
     const passes = {
       passes: [
         {
-          name: "bufferA",
+          name: 'bufferA',
           fragmentShader: `
             #ifdef GL_ES
             precision mediump float;
@@ -72,7 +71,7 @@ const App = () => {
           textures: [],
         },
         {
-          name: "bufferB",
+          name: 'bufferB',
           fragmentShader: `
             precision highp float;
             uniform sampler2D u_texture0;
@@ -84,10 +83,10 @@ const App = () => {
               gl_FragColor = vec4(smoothValue, 0.0, 0.0, 1.0);
             }
           `,
-          textures: ["bufferA"],
+          textures: ['bufferA'],
         },
         {
-          name: "MainBuffer",
+          name: 'MainBuffer',
           fragmentShader: `
             precision highp float;
             uniform sampler2D u_texture0;
@@ -98,33 +97,33 @@ const App = () => {
               gl_FragColor = color;
             }
           `,
-          textures: ["bufferB"],
+          textures: ['bufferB'],
         },
       ],
       textures: [],
-    };
-    rendererRef.current.setup(passes);  // Setup the renderer with the passes
-    requestAnimationFrame(rendererRef.current.render);  // Start the rendering loop
-  }, []);
+    }
+    rendererRef.current.setup(passes) // Setup the renderer with the passes
+    requestAnimationFrame(rendererRef.current.render) // Start the rendering loop
+  }, [])
 
   // Render the canvas element
-  return <canvas ref={canvasRef} width={800} height={600} />;
-};
+  return <canvas ref={canvasRef} width={800} height={600} />
+}
 
-export default App;
+export default App
 ```
 
 ### Advanced Usage
 
-For more advanced usage, such as adding multiple passes and using textures, refer to the [API documentation](#) ~in a near future~.
+For more advanced usage, such as adding multiple passes and using textures, refer to the [API documentation](#advanced-usage) ~in a near future~.
 
 ## Contributing
 
 Contributions are welcome! Please open an issue or submit a pull request on GitHub.
 
-[//]:  (Externals)
+[//]: (Externals)
 [npm-image]: https://img.shields.io/npm/v/@sohne/shader.vista.svg?style=flat-square&logo=npm
 [npm-url]: https://npmjs.org/package/@sohne/shader.vista
 [npm-downloads-image]: https://img.shields.io/npm/dm/@sohne/shader.vista.svg
 [npm-downloads-url]: https://npmcharts.com/compare/@sohne/shader.vista?minimal=true
-[//]:  (EOF)
+[//]: (EOF)
