@@ -1,10 +1,10 @@
-import resolve from '@rollup/plugin-node-resolve';
-import commonjs from '@rollup/plugin-commonjs';
-import typescript from '@rollup/plugin-typescript';
-import dts from 'rollup-plugin-dts';
-import fs from 'fs';
+import fs from 'node:fs'
+import commonjs from '@rollup/plugin-commonjs'
+import resolve from '@rollup/plugin-node-resolve'
+import typescript from '@rollup/plugin-typescript'
+import dts from 'rollup-plugin-dts'
 
-const pkg = JSON.parse(fs.readFileSync('./package.json', 'utf-8'));
+const pkg = JSON.parse(fs.readFileSync('./package.json', 'utf-8'))
 
 const config = [
   {
@@ -33,6 +33,6 @@ const config = [
     output: [{ file: pkg.types, format: 'esm' }],
     plugins: [dts()],
   },
-];
+]
 
-export default config;
+export default config
