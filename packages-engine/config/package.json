@@ -1,0 +1,19 @@
+{
+  "name": "@sohne/shader.vista-config",
+  "version": "26.3.0",
+  "private": true,
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch"
+  },
+  "devDependencies": {
+    "tsdown": "catalog:build",
+    "typescript": "catalog:build"
+  }
+}
