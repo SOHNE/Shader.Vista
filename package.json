@@ -32,19 +32,19 @@
     "prepare": "husky"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^7.7.3",
-    "@rollup/plugin-commonjs": "^29.0.2",
-    "@rollup/plugin-node-resolve": "^16.0.3",
-    "@rollup/plugin-typescript": "^12.3.0",
-    "@types/webgl2": "^0.0.12",
-    "eslint": "^10.1.0",
-    "eslint-plugin-format": "^2.0.1",
-    "husky": "^9.1.7",
-    "lint-staged": "^16.4.0",
-    "rollup": "^4.60.0",
-    "rollup-plugin-dts": "^6.4.1",
-    "tslib": "^2.8.1",
-    "typescript": "^6.0.2"
+    "@antfu/eslint-config": "catalog:dev-tools",
+    "@rollup/plugin-commonjs": "catalog:build",
+    "@rollup/plugin-node-resolve": "catalog:build",
+    "@rollup/plugin-typescript": "catalog:build",
+    "@types/webgl2": "catalog:types",
+    "eslint": "catalog:dev-tools",
+    "eslint-plugin-format": "catalog:dev-tools",
+    "husky": "catalog:dev-tools",
+    "lint-staged": "catalog:dev-tools",
+    "rollup": "catalog:build",
+    "rollup-plugin-dts": "catalog:build",
+    "tslib": "catalog:core",
+    "typescript": "catalog:build"
   },
   "lint-staged": {
     "*": "eslint --fix"

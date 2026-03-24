@@ -1,0 +1,25 @@
+shellEmulator: true
+
+trustPolicy: no-downgrade
+
+packages:
+  - .
+
+catalogs:
+  build:
+    '@rollup/plugin-commonjs': ^29.0.2
+    '@rollup/plugin-node-resolve': ^16.0.3
+    '@rollup/plugin-typescript': ^12.3.0
+    rollup: ^4.60.0
+    rollup-plugin-dts: ^6.4.1
+    typescript: ^6.0.2
+  core:
+    tslib: ^2.8.1
+  dev-tools:
+    '@antfu/eslint-config': ^7.7.3
+    eslint: ^10.1.0
+    eslint-plugin-format: ^2.0.1
+    husky: ^9.1.7
+    lint-staged: ^16.4.0
+  types:
+    '@types/webgl2': ^0.0.12
