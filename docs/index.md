@@ -1,0 +1,24 @@
+---
+# https://vitepress.dev/reference/default-theme-home-page
+layout: home
+
+hero:
+  name: "Shader.Vista"
+  text: "Versatile WebGL renderer"
+  tagline: "Designed with multipass support in mind."
+  actions:
+    - theme: brand
+      text: Getting Started
+      link: /getting-started
+    - theme: alt
+      text: View on GitHub
+      link: https://github.com/SOHNE/Shader.Vista
+
+features:
+  - title: Multi-pass Rendering
+    details: Effortlessly chain multiple fragment shaders with textures.
+  - title: React Integration
+    details: Modern hooks-based integration for effortless React apps.
+  - title: Lightweight
+    details: Small footprint with a clean, flexible API.
+---

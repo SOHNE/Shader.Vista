@@ -16,7 +16,7 @@ export default await antfu(
       semi: false,
     },
 
-    ignores: ['.pnpm-store/**'],
+    ignores: ['.pnpm-store/**', 'docs/.vitepress/cache/**'],
   },
 
   {

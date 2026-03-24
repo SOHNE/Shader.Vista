@@ -1,0 +1,16 @@
+{
+  "name": "@sohne/shader.vista-docs",
+  "version": "26.3.0",
+  "private": true,
+  "scripts": {
+    "docs:dev": "vitepress dev",
+    "docs:build": "vitepress build",
+    "docs:preview": "vitepress preview"
+  },
+  "devDependencies": {
+    "@sohne/shader.vista": "workspace:*",
+    "unocss": "catalog:build",
+    "vitepress": "catalog:build",
+    "vue": "catalog:build"
+  }
+}
