@@ -29,7 +29,7 @@ export default class WebGLRenderer {
   public mouseY: number = 0;
   public time: number = 0;
   public timeDelta: number = 0;
-  public realToCSSPixels: number = window.devicePixelRatio || 1;
+  public realToCSSPixels: number = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
   public paused: boolean = false;
   public playbackTime: number = 0;
   public lastTime: number = 0;
@@ -49,10 +49,12 @@ export default class WebGLRenderer {
     this.animationRequestID = -1;
     this.gl = this.initializeWebGLContext(canvas);
     this.initMouseEvents();
-    window.addEventListener(
-      'resize',
-      this.resizeCanvasToDisplaySize.bind(this)
-    );
+    if (typeof window !== 'undefined') {
+      window.addEventListener(
+        'resize',
+        this.resizeCanvasToDisplaySize.bind(this)
+      );
+    }
     this.now = new Date();
     this.onError = onError;
   }
@@ -190,7 +192,8 @@ export default class WebGLRenderer {
     }
 
     {
-      const t = performance.now();
+      const t = typeof performance !== 'undefined' ? performance.now() : Date.now();
+      if (this.startTime === 0) this.startTime = t;
       this.timeDelta = (t - this.startTime) / 1000.0;
       this.currentTime += this.timeDelta;
       this.frameRate = 1.0 / this.timeDelta;
@@ -212,7 +215,9 @@ export default class WebGLRenderer {
     }
 
     // FIX: Placed here just to maintin a render loop. Must be redone later.
-    this.animationRequestID = requestAnimationFrame(this.render.bind(this));
+    if (typeof requestAnimationFrame !== 'undefined') {
+      this.animationRequestID = requestAnimationFrame(this.render.bind(this));
+    }
   }
 
   public setup(config: RendererConfig): void {
