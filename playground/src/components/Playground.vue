@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
 import { Pane, Splitpanes } from 'splitpanes'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useSharing } from '../composables/useSharing'
 import Editor from './Editor/Editor.vue'
 import Header from './Header/Header.vue'
@@ -40,16 +41,20 @@ const sharedCode = getCodeFromUrl()
 if (sharedCode) {
   code.value = sharedCode
 }
+
+const breakpoints = useBreakpoints(breakpointsTailwind)
+const isMobile = breakpoints.smaller('md')
+const horizontal = computed(() => isMobile.value)
 </script>
 
 <template>
-  <div class="playground-container h-screen w-screen flex flex-col overflow-hidden text-main bg-main">
+  <div class="playground-container h-[100dvh] w-screen flex flex-col overflow-hidden text-main bg-main">
     <div class="flex-1 overflow-hidden">
-      <Splitpanes class="default-theme">
-        <Pane>
+      <Splitpanes class="default-theme" :horizontal="horizontal">
+        <Pane :size="horizontal ? 40 : 50">
           <Preview :code="code" />
         </Pane>
-        <Pane class="flex flex-col">
+        <Pane :size="horizontal ? 60 : 50" class="flex flex-col min-h-0 min-w-0">
           <Header :code="code" />
           <Editor v-model="code" class="flex-1" />
         </Pane>
@@ -61,9 +66,17 @@ if (sharedCode) {
 <style>
 .splitpanes.default-theme .splitpanes__pane {
   background-color: transparent;
+  transition: all 0.4s ease-in-out;
 }
 .splitpanes.default-theme .splitpanes__splitter {
-  background-color: #444;
-  width: 3px;
+  /* Minimal background to show the line */
+  @apply bg-gray-200 dark:bg-gray-800;
+  transition: all 0.4s ease-in-out;
+}
+.splitpanes.default-theme.splitpanes--vertical > .splitpanes__splitter {
+  width: 1px;
+}
+.splitpanes.default-theme.splitpanes--horizontal > .splitpanes__splitter {
+  height: 1px;
 }
 </style>

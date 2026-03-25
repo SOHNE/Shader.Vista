@@ -28,30 +28,67 @@ html {
 }
 
 .splitpanes__splitter {
-  @apply relative;
+  @apply relative bg-gray-200/50 dark:bg-gray-800/50;
+  transition: background-color 0.2s;
+  touch-action: none;
 }
 
+.splitpanes__splitter:hover {
+  @apply bg-teal-500/50;
+}
+
+/* Larger hit area for touch/drag */
+.splitpanes__splitter::after {
+  content: '';
+  position: absolute;
+  z-index: 10;
+}
+
+.splitpanes--vertical > .splitpanes__splitter::after {
+  top: 0;
+  bottom: 0;
+  left: -10px;
+  right: -10px;
+  cursor: col-resize;
+}
+
+.splitpanes--horizontal > .splitpanes__splitter::after {
+  left: 0;
+  right: 0;
+  top: -10px;
+  bottom: -10px;
+  cursor: row-resize;
+}
+
+/* Visual indicator */
 .splitpanes__splitter:before {
   content: '';
-  transition: opacity 0.4s;
-  background-color: rgb(125 125 125 / 0.1);
-  @apply absolute z-1 top-0 left-0 op-0;
-}
-
-.splitpanes__splitter:hover:before {
-  @apply op-100;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: currentColor;
+  border-radius: 999px;
+  opacity: 0.3;
+  transition:
+    opacity 0.2s,
+    scale 0.2s;
+  pointer-events: none;
 }
 
 .splitpanes--vertical > .splitpanes__splitter:before {
-  @apply h-full -right-10px;
-}
-
-.splitpanes--horizontal > .splitpanes__splitter {
-  min-height: 0px;
+  width: 2px;
+  height: 20px;
 }
 
 .splitpanes--horizontal > .splitpanes__splitter:before {
-  @apply w-full -bottom-6px -top-6px;
+  width: 20px;
+  height: 2px;
+}
+
+.splitpanes__splitter:hover:before {
+  opacity: 0.8;
+  scale: 1.2;
 }
 
 /* CodeMirror Fold Markers */

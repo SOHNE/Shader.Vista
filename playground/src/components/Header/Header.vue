@@ -10,13 +10,13 @@ defineProps<{
 </script>
 
 <template>
-  <header class="header-layout">
-    <div class="flex items-center gap-2">
-      <Brand />
-      <VersionSelector />
+  <header class="header-layout px-2 sm:px-3 py-1 sm:py-1.5 h-9 sm:h-10">
+    <div class="flex items-center gap-1 sm:gap-2 min-w-0 flex-shrink">
+      <Brand class="flex-shrink-0" />
+      <VersionSelector class="flex-shrink" />
     </div>
 
-    <div class="flex items-center gap-3">
+    <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
       <Share :code="code" />
       <a
         href="https://github.com/zschzen/Shader.Vista"

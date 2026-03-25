@@ -22,7 +22,7 @@ watch(() => props.modelValue, (newVal) => {
 </script>
 
 <template>
-  <div ref="editorRef" class="editor-container h-full w-full" />
+  <div ref="editorRef" class="editor-container h-full w-full min-h-0" />
 </template>
 
 <style>
