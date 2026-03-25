@@ -1,0 +1,15 @@
+[build]
+publish = "docs/dist"
+command = "git fetch --tags && pnpm run deploy"
+
+[build.environment]
+NODE_VERSION = "24"
+NODE_OPTIONS = "--max_old_space_size=4096"
+
+[functions]
+node_bundler = "esbuild"
+
+[[redirects]]
+from = "/play/*"
+to = "/play/index.html"
+status = 200
