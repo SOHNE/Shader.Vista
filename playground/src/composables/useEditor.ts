@@ -1,9 +1,12 @@
-import { type Ref, onMounted } from 'vue'
-import { EditorState } from '@codemirror/state'
-import { EditorView, basicSetup } from 'codemirror'
+import type { Ref } from 'vue'
 import { javascript } from '@codemirror/lang-javascript'
+import { EditorState } from '@codemirror/state'
+import { EditorView, scrollPastEnd } from '@codemirror/view'
+import { basicSetup } from 'codemirror'
+import { onMounted } from 'vue'
+import { scrollbarRuler, scrollbarRulerTheme } from '../plugins/scrollbar'
+import { selectionLineHighlightPlugin } from '../plugins/selection'
 import { vitesse } from '../plugins/theme'
-import { selectionLineHighlightPlugin } from '../plugins/selection-plugin'
 
 export function useEditor(
   container: Ref<HTMLDivElement | null>,
@@ -22,6 +25,9 @@ export function useEditor(
             javascript(),
             vitesse,
             selectionLineHighlightPlugin,
+            scrollbarRuler,
+            scrollbarRulerTheme,
+            scrollPastEnd(),
             EditorView.updateListener.of((update) => {
               if (update.docChanged) {
                 onChange(update.state.doc.toString())

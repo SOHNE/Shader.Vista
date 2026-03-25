@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { Pane, Splitpanes } from 'splitpanes'
 import { ref } from 'vue'
+import { useSharing } from '../composables/useSharing'
 import Editor from './Editor/Editor.vue'
+import Header from './Header/Header.vue'
 import Preview from './Preview/Preview.vue'
 import 'splitpanes/dist/splitpanes.css'
 
@@ -32,18 +34,27 @@ renderer.play();
 `
 
 const code = ref(initialCode)
+const { getCodeFromUrl } = useSharing(code)
+
+const sharedCode = getCodeFromUrl()
+if (sharedCode) {
+  code.value = sharedCode
+}
 </script>
 
 <template>
-  <div class="playground-container h-screen w-screen overflow-hidden">
-    <Splitpanes class="default-theme">
-      <Pane>
-        <Preview :code="code" />
-      </Pane>
-      <Pane>
-        <Editor v-model="code" />
-      </Pane>
-    </Splitpanes>
+  <div class="playground-container h-screen w-screen flex flex-col overflow-hidden text-main bg-main">
+    <div class="flex-1 overflow-hidden">
+      <Splitpanes class="default-theme">
+        <Pane>
+          <Preview :code="code" />
+        </Pane>
+        <Pane class="flex flex-col">
+          <Header :code="code" />
+          <Editor v-model="code" class="flex-1" />
+        </Pane>
+      </Splitpanes>
+    </div>
   </div>
 </template>
 

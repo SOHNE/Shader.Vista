@@ -21,6 +21,6 @@ watch(() => props.code, (newCode) => {
 
 <template>
   <div class="preview-container h-full w-full bg-black overflow-hidden">
-    <canvas ref="canvasRef" class="w-full h-full block"></canvas>
+    <canvas ref="canvasRef" class="w-full h-full block" />
   </div>
 </template>

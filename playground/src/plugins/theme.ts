@@ -6,7 +6,7 @@ import { tags as t } from '@lezer/highlight'
 const keyword = 'var(--cm-keyword)'
 const property = 'var(--cm-property)'
 const punctuation = 'var(--cm-punctuation)'
-const invalid = '#ffffff'
+const invalid = 'var(--cm-invalid, #ffffff)'
 const foreground = 'var(--cm-foreground)'
 const lineNumber = 'var(--cm-line-number)'
 const comment = 'var(--cm-comment)'
@@ -18,12 +18,17 @@ const background = 'var(--cm-background)'
 const tooltipBackground = 'var(--cm-tooltip-background)'
 const selection = 'var(--cm-selection-background)'
 const border = 'var(--cm-border)'
-const cursor = '#888'
+const cursor = 'var(--cm-cursor, #888)'
 
 export const vitesseTheme = EditorView.theme({
   '&': {
     color: foreground,
     backgroundColor: background,
+    fontFamily: 'var(--cm-font-family)',
+    fontSize: 'var(--cm-font-size, 14px)',
+    lineHeight: 'var(--cm-line-height, 1.6)',
+    fontVariantLigatures: 'var(--cm-font-ligatures, normal)',
+    fontFeatureSettings: 'var(--cm-font-feature-settings, "calt" 1)',
   },
   '& div': {
     flexDirection: 'initial',
@@ -45,20 +50,23 @@ export const vitesseTheme = EditorView.theme({
   '&.cm-focused .cm-selectionBackground, .cm-selectionBackground, .cm-content ::selection': { backgroundColor: `${selection} !important` },
 
   '.cm-panels': { backgroundColor: darkBackground, color: foreground },
-  '.cm-panels.cm-panels-top': { borderBottom: '2px solid black' },
-  '.cm-panels.cm-panels-bottom': { borderTop: '2px solid black' },
+  '.cm-panels.cm-panels-top': { borderBottom: '1px solid var(--cm-border)' },
+  '.cm-panels.cm-panels-bottom': { borderTop: '1px solid var(--cm-border)' },
 
   '.cm-searchMatch': {
-    backgroundColor: '#72a1ff59',
-    outline: '1px solid #457dff',
+    backgroundColor: 'var(--cm-search-match-background, #72a1ff59)',
+    outline: '1px solid var(--cm-search-match-outline, #457dff)',
   },
   '.cm-searchMatch.cm-searchMatch-selected': {
-    backgroundColor: '#6199ff2f',
+    backgroundColor: 'var(--cm-search-match-selected-background, #6199ff2f)',
   },
 
-  '.cm-line': { border: '1px solid transparent' },
+  '.cm-line': {
+    border: '1px solid transparent',
+    lineHeight: 'inherit',
+  },
   '.cm-activeLine': { backgroundColor: highlightBackground, border: '1px solid var(--cm-line-highlight-border)' },
-  '.cm-selectionMatch': { backgroundColor: '#aafe661a' },
+  '.cm-selectionMatch': { backgroundColor: 'var(--cm-selection-match-background, #aafe661a)' },
 
   '&.cm-focused .cm-matchingBracket, &.cm-focused .cm-nonmatchingBracket': {
     backgroundColor: 'transparent',
@@ -68,24 +76,26 @@ export const vitesseTheme = EditorView.theme({
     backgroundColor: background,
     color: lineNumber,
     border: 'none',
+    fontFamily: 'var(--cm-font-family)',
   },
 
   '.cm-activeLineGutter': {
     backgroundColor: 'transparent',
-    color: '#bfbaaa',
+    color: 'var(--cm-active-line-gutter, #bfbaaa)',
   },
 
   '.cm-foldPlaceholder': {
     backgroundColor: 'transparent',
     border: 'none',
-    color: '#ddd',
+    color: 'var(--cm-fold-placeholder-color, #ddd)',
   },
 
   '.cm-tooltip': {
     border: `1px solid ${border}`,
     borderRadius: '4px',
     backgroundColor: tooltipBackground,
-    color: '#c2beb3',
+    color: 'var(--cm-tooltip-foreground, #c2beb3)',
+    fontFamily: 'var(--cm-font-family)',
   },
   '.cm-tooltip .cm-tooltip-arrow:before': {
     borderTopColor: 'transparent',
@@ -98,7 +108,7 @@ export const vitesseTheme = EditorView.theme({
   '.cm-tooltip-autocomplete': {
     '& > ul > li[aria-selected]': {
       backgroundColor: selection,
-      color: '#c2beb3',
+      color: 'var(--cm-tooltip-foreground, #c2beb3)',
     },
   },
 }, { dark: true })
@@ -118,7 +128,7 @@ export const vitesseHighlightStyle = HighlightStyle.define([
   },
   {
     tag: [t.color, t.constant(t.name), t.standard(t.name)],
-    color: '#c99076',
+    color: 'var(--cm-constant, #c99076)',
   },
   {
     tag: [t.definition(t.name), t.separator],
@@ -126,15 +136,15 @@ export const vitesseHighlightStyle = HighlightStyle.define([
   },
   {
     tag: [t.angleBracket],
-    color: '#666666',
+    color: 'var(--cm-angle-bracket, #666666)',
   },
   {
     tag: [t.brace],
-    color: '#5eaab5',
+    color: 'var(--cm-brace, #5eaab5)',
   },
   {
     tag: [t.bracket],
-    color: '#4d9375',
+    color: 'var(--cm-bracket, #4d9375)',
   },
   {
     tag: [t.typeName, t.className, t.number, t.changed, t.annotation, t.modifier, t.self, t.namespace, t.keyword, t.atom, t.bool, t.special(t.variableName)],
@@ -154,11 +164,11 @@ export const vitesseHighlightStyle = HighlightStyle.define([
   },
   {
     tag: t.strong,
-    fontWeight: 'bold',
+    fontWeight: 'var(--cm-font-weight-bold, bold)',
   },
   {
     tag: t.emphasis,
-    fontStyle: 'italic',
+    fontStyle: 'var(--cm-font-style-italic, italic)',
   },
   {
     tag: t.strikethrough,
@@ -171,7 +181,7 @@ export const vitesseHighlightStyle = HighlightStyle.define([
   },
   {
     tag: t.heading,
-    fontWeight: 'bold',
+    fontWeight: 'var(--cm-font-weight-bold, bold)',
     color: property,
   },
   {

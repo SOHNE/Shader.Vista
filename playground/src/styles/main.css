@@ -2,24 +2,6 @@
   /* scrollbars colors */
   --play-ttc-c-thumb: #eee;
   --play-ttc-c-track: white;
-
-  /* CodeMirror Theme Colors */
-  --cm-foreground: #d4d4d4;
-  --cm-background: #1e1e1e;
-  --cm-keyword: #569cd6;
-  --cm-property: #9cdcfe;
-  --cm-punctuation: #d4d4d4;
-  --cm-line-number: #858585;
-  --cm-comment: #6a9955;
-  --cm-variable: #9cdcfe;
-  --cm-string: #ce9178;
-  --cm-decorator: #dcdcaa;
-  --cm-definition-keyword: #569cd6;
-  --cm-line-highlight-background: #2c2c2c;
-  --cm-line-highlight-border: #3e3e3e;
-  --cm-selection-background: #264f78;
-  --cm-tooltip-background: #252526;
-  --cm-border: #454545;
 }
 
 body,
@@ -32,10 +14,11 @@ html {
 
 .dark {
   color-scheme: dark;
-  background: #080808;
+  background: #121212;
   color: white;
+
   /* scrollbars colors */
-  --play-ttc-c-thumb: #222;
+  --play-ttc-c-thumb: #333;
   --play-ttc-c-track: #111;
 }
 
@@ -69,4 +52,44 @@ html {
 
 .splitpanes--horizontal > .splitpanes__splitter:before {
   @apply w-full -bottom-6px -top-6px;
+}
+
+/* CodeMirror Fold Markers */
+.cm-fold-marker {
+  cursor: pointer;
+  display: inline-block;
+  width: 1.2em;
+  text-align: center;
+  user-select: none;
+}
+
+.cm-fold-marker::after {
+  content: '▼';
+  font-size: 0.8em;
+  opacity: 0.5;
+  transition: transform 0.2s;
+  display: inline-block;
+}
+
+.cm-fold-marker:hover::after {
+  opacity: 1;
+}
+
+.cm-fold-marker--folded::after {
+  content: '▶';
+  transform: none;
+}
+
+.cm-fold-placeholder {
+  background: #444 !important;
+  color: #ccc !important;
+  border-radius: 3px;
+  padding: 0 4px;
+  margin: 0 2px;
+  font-size: 0.9em;
+  cursor: pointer;
+}
+
+.cm-fold-placeholder:hover {
+  background: #555 !important;
 }
