@@ -13,7 +13,8 @@
     "deploy": "nr build && nr -C docs docs:build && nr -C playground build",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "prepare": "husky"
+    "prepare": "husky",
+    "typecheck": "tsgo --noEmit"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:dev-tools",
@@ -27,7 +28,9 @@
     "@iconify-json/simple-icons": "catalog:dev-tools",
     "@lezer/highlight": "catalog:dev-tools",
     "@sohne/shader.vista": "workspace:*",
+    "@types/node": "catalog:types",
     "@types/splitpanes": "catalog:docs",
+    "@typescript/native-preview": "catalog:typescript",
     "@unocss/preset-icons": "catalog:build",
     "@unocss/preset-web-fonts": "catalog:docs",
     "@vitejs/plugin-vue": "catalog:vite",
@@ -39,12 +42,14 @@
     "lint-staged": "catalog:dev-tools",
     "lz-string": "catalog:shared",
     "splitpanes": "catalog:docs",
-    "typescript": "catalog:build",
+    "tsx": "catalog:typescript",
+    "typescript": "catalog:typescript",
     "unocss": "catalog:build",
     "unplugin-auto-import": "catalog:vite",
     "unplugin-vue-components": "catalog:vite",
     "vite": "catalog:vite",
     "vite-plugin-inspect": "catalog:vite",
+    "vitest": "catalog:dev-tools",
     "vue": "catalog:build"
   },
   "lint-staged": {

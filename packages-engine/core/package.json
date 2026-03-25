@@ -32,6 +32,6 @@
     "@types/webgl2": "catalog:types",
     "tsdown": "catalog:build",
     "tslib": "catalog:core",
-    "typescript": "catalog:build"
+    "typescript": "catalog:typescript"
   }
 }
