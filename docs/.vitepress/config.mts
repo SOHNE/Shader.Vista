@@ -2,6 +2,7 @@ import Unocss from 'unocss/vite'
 import { defineConfig } from 'vitepress'
 
 export default defineConfig({
+  outDir: '../dist',
   title: 'Shader.Vista',
   description: 'A versatile WebGL renderer designed with multipass support in mind.',
   themeConfig: {
