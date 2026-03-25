@@ -52,6 +52,9 @@ catalogs:
   types:
     '@types/webgl2': ^0.0.12
 
+  utils:
+    '@antfu/ni': ^30.0.0
+
   vite:
     '@vitejs/plugin-vue': ^6.0.5
     unplugin-auto-import: ^21.0.0

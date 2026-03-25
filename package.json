@@ -10,13 +10,14 @@
     "docs": "pnpm -C docs run docs:dev",
     "play": "pnpm -C playground run dev",
     "test": "pnpm -r test",
-    "deploy": "pnpm build && pnpm -C docs docs:build && pnpm -C playground build",
+    "deploy": "nr build && nr -C docs docs:build && nr -C playground build",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "prepare": "husky"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:dev-tools",
+    "@antfu/ni": "catalog:utils",
     "@codemirror/lang-javascript": "catalog:dev-tools",
     "@codemirror/language": "catalog:dev-tools",
     "@codemirror/lint": "catalog:dev-tools",
