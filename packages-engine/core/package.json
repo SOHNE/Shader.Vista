@@ -1,13 +1,23 @@
 {
   "name": "@sohne/shader.vista",
+  "type": "module",
   "version": "26.3.0",
   "description": "A versatile WebGL renderer designed with multipass support in mind.",
-  "author": "SOHNE",
+  "author": "Leandro Peres <leandroperes@protonmail.com>",
   "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SOHNE/Shader.Vista.git",
+    "directory": "packages-engine/core"
+  },
+  "bugs": {
+    "url": "https://github.com/SOHNE/Shader.Vista/issues"
+  },
   "keywords": [
     "shader",
     "glsl",
     "multipass",
+    "webgl",
     "canvas"
   ],
   "exports": {
