@@ -1,9 +1,12 @@
 import type { Ref } from 'vue'
-import { javascript } from '@codemirror/lang-javascript'
+import { autocompletion } from '@codemirror/autocomplete'
+import { cpp } from '@codemirror/lang-cpp'
 import { EditorState } from '@codemirror/state'
 import { EditorView, scrollPastEnd } from '@codemirror/view'
 import { basicSetup } from 'codemirror'
 import { onMounted } from 'vue'
+import { glslCompletions } from '../plugins/completions'
+import { codeFoldingExtension } from '../plugins/folding'
 import { scrollbarRuler, scrollbarRulerTheme } from '../plugins/scrollbar'
 import { selectionLineHighlightPlugin } from '../plugins/selection'
 import { vitesse } from '../plugins/theme'
@@ -22,12 +25,17 @@ export function useEditor(
           doc: initialValue,
           extensions: [
             basicSetup,
-            javascript(),
+            cpp(),
             vitesse,
             selectionLineHighlightPlugin,
             scrollbarRuler,
             scrollbarRulerTheme,
             scrollPastEnd(),
+            codeFoldingExtension(),
+            autocompletion({
+              activateOnTyping: true,
+              override: [glslCompletions()],
+            }),
             EditorView.updateListener.of((update) => {
               if (update.docChanged) {
                 onChange(update.state.doc.toString())

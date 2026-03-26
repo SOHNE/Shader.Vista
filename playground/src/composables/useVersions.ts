@@ -1,12 +1,6 @@
 import { onMounted, ref } from 'vue'
 import pkg from '../../package.json'
 
-declare global {
-  const __SHA__: string
-  const __LASTEST_TAG__: string
-  const __LASTEST_TAG_SHA__: string
-}
-
 export function useVersions() {
   const versions = ref<string[]>([])
   const npmLatestVersion = ref('')

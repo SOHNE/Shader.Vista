@@ -32,6 +32,60 @@ export function useRenderer(canvasRef: Ref<HTMLCanvasElement | null>) {
         renderer = new Klass(canvasRef.value, (details: any) => {
           console.error('Renderer Error:', details)
         })
+
+        // Monkey-patch setup to clear state first since we can't modify core
+        let lastConfig: any = null
+        const originalSetup = renderer.setup.bind(renderer)
+        renderer.setup = (config: any) => {
+          lastConfig = config
+          if (renderer.animationRequestID !== -1) {
+            cancelAnimationFrame(renderer.animationRequestID)
+            renderer.animationRequestID = -1
+          }
+          renderer.passes = null
+          renderer.textureMap = {}
+          renderer.reset()
+          originalSetup(config)
+        }
+
+        // Monkey-patch resize to fix broken texture links when passes recreate their textures
+        const originalResize = renderer.resizeCanvasToDisplaySize.bind(renderer)
+        renderer.resizeCanvasToDisplaySize = () => {
+          const displayWidth = Math.floor(
+            renderer.canvas.clientWidth * renderer.realToCSSPixels,
+          )
+          const displayHeight = Math.floor(
+            renderer.canvas.clientHeight * renderer.realToCSSPixels,
+          )
+
+          if (
+            renderer.canvas.width !== displayWidth
+            || renderer.canvas.height !== displayHeight
+          ) {
+            originalResize()
+
+            let current = renderer.passes
+            while (current) {
+              const passName = current.shader.passName
+              if (passName) {
+                renderer.textureMap[passName] = current.texture
+              }
+              current = current.next
+            }
+
+            if (lastConfig && lastConfig.passes) {
+              current = renderer.passes
+              while (current) {
+                const passName = current.shader.passName
+                const passConf = lastConfig.passes.find((p: any) => p.name === passName)
+                if (passConf && passConf.textures) {
+                  current.textures = passConf.textures.map((tName: string) => renderer.textureMap[tName])
+                }
+                current = current.next
+              }
+            }
+          }
+        }
       }
     }
   }
