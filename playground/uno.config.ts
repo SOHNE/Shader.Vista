@@ -11,22 +11,33 @@ import {
 
 export default defineConfig({
   shortcuts: {
-    'bg-main': 'bg-white dark:bg-[#121212]',
-    'bg-hover': 'bg-gray-100 dark:bg-gray-800',
-    'bg-popover': 'bg-white dark:bg-[#1a1a1a]',
-    'border-main': 'border-gray-200 dark:border-gray-800',
-    'text-main': 'text-gray-900 dark:text-gray-100',
-    'text-muted': 'text-gray-500 dark:text-gray-400',
-    'text-primary': 'text-teal-600 dark:text-teal-400',
     'icon-btn': 'op75 hover:op-100 transition-opacity cursor-pointer',
-    'header-layout': 'flex items-center justify-between px-3 py-1 bg-main border-b border-main',
+    'flex-center': 'flex items-center justify-center',
+
+    'badge': 'px-1.5 py-0.5 rounded text-sm font-bold',
+    'p-item': 'px-3 py-1',
+    'p-btn': 'px-3 py-1.5',
+    'p-btn-sm': 'px-1.5 py-0.5',
   },
   theme: {
     colors: {
-      primary: {
-        DEFAULT: '#0d9488', // teal-600
-        dark: '#2dd4bf', // teal-400
-      },
+      'primary': 'var(--primary)',
+      'muted': 'var(--muted)',
+      'dim': 'var(--dim)',
+      'canvas': 'var(--canvas)',
+      'surface-1': 'var(--surface-1)',
+      'surface-2': 'var(--surface-2)',
+      'surface-3': 'var(--surface-3)',
+      'border': 'var(--border)',
+      'accent': 'var(--accent)',
+      'accent-subtle': 'var(--accent-subtle)',
+      'success': 'var(--success)',
+      'scrollbar-thumb': 'var(--scrollbar-thumb)',
+      'scrollbar-track': 'var(--scrollbar-track)',
+
+      'tab-active': 'var(--tab-active)',
+      'tab-inactive': 'var(--tab-inactive)',
+      'tab-hover': 'var(--tab-hover)',
     },
   },
   presets: [
