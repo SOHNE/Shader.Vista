@@ -6,6 +6,7 @@ export default await antfu(
     type: 'app',
     typescript: true,
     vue: true,
+    unocss: true,
     formatters: true,
     pnpm: true,
 
@@ -26,6 +27,8 @@ export default await antfu(
     ignores: [
       '.pnpm-store/**',
       'docs/.vitepress/cache/**',
+
+      // CSS
       'playground/src/main.css',
     ],
   },

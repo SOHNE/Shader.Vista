@@ -25,14 +25,16 @@ catalogs:
 
   dev-tools:
     '@antfu/eslint-config': ^7.7.3
-    '@codemirror/lang-javascript': ^6.2.5
+    '@codemirror/autocomplete': ^6.18.6
+    '@codemirror/lang-cpp': ^6.0.3
     '@codemirror/language': ^6.12.3
     '@codemirror/lint': ^6.9.5
     '@codemirror/state': ^6.6.0
     '@codemirror/view': ^6.40.0
-    '@iconify-json/carbon': ^1.2.19
+    '@iconify-json/carbon': ^1.2.20
     '@iconify-json/simple-icons': ^1.2.75
     '@lezer/highlight': ^1.2.3
+    '@unocss/eslint-plugin': ^66.6.7
     codemirror: ^6.0.2
     eslint: ^10.1.0
     eslint-plugin-format: ^2.0.1
@@ -40,7 +42,7 @@ catalogs:
     lint-staged: ^16.4.0
 
     simple-git: ^3.33.0
-    vitest: ^4.1.1
+    vitest: ^4.1.2
 
   docs:
     '@types/splitpanes': ^2.2.6
@@ -57,19 +59,20 @@ catalogs:
     '@types/webgl2': ^0.0.12
 
   typescript:
-    '@typescript-eslint/utils': ^8.56.1
+    '@typescript-eslint/utils': ^8.57.2
     '@typescript/native-preview': latest
     tsx: ^4.21.0
-    typescript: 5.8.3
+    typescript: 5.9.3
 
   utils:
     '@antfu/ni': ^30.0.0
+    taze: ^19.10.0
 
   vite:
     '@vitejs/plugin-vue': ^6.0.5
     unplugin-auto-import: ^21.0.0
     unplugin-vue-components: ^32.0.0
-    vite: ^8.0.2
+    vite: ^8.0.3
     vite-plugin-inspect: 12.0.0-beta.1
 onlyBuiltDependencies:
   - esbuild

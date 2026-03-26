@@ -5,6 +5,7 @@
   "packageManager": "pnpm@10.33.0",
   "description": "Monorepo for Shader.Vista",
   "scripts": {
+    "taze": "taze minor -wIr && pnpm -r --parallel run update-post",
     "build": "pnpm -r --filter \"./packages-engine/**\" build",
     "dev": "pnpm -r --filter \"./packages-engine/**\" dev",
     "docs": "pnpm -C docs run docs:dev",
@@ -16,10 +17,14 @@
     "prepare": "husky",
     "typecheck": "tsgo --noEmit"
   },
+  "dependencies": {
+    "taze": "catalog:utils"
+  },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:dev-tools",
     "@antfu/ni": "catalog:utils",
-    "@codemirror/lang-javascript": "catalog:dev-tools",
+    "@codemirror/autocomplete": "catalog:dev-tools",
+    "@codemirror/lang-cpp": "catalog:dev-tools",
     "@codemirror/language": "catalog:dev-tools",
     "@codemirror/lint": "catalog:dev-tools",
     "@codemirror/state": "catalog:dev-tools",
@@ -31,6 +36,7 @@
     "@types/node": "catalog:types",
     "@types/splitpanes": "catalog:docs",
     "@typescript/native-preview": "catalog:typescript",
+    "@unocss/eslint-plugin": "catalog:dev-tools",
     "@unocss/preset-icons": "catalog:build",
     "@unocss/preset-web-fonts": "catalog:docs",
     "@vitejs/plugin-vue": "catalog:vite",
@@ -42,6 +48,7 @@
     "lint-staged": "catalog:dev-tools",
     "lz-string": "catalog:shared",
     "splitpanes": "catalog:docs",
+    "taze": "catalog:utils",
     "tsx": "catalog:typescript",
     "typescript": "catalog:typescript",
     "unocss": "catalog:build",
