@@ -25,9 +25,12 @@ function formatVersion(ver: string) {
 </script>
 
 <template>
-  <div ref="el" class="ml-2 relative text-xs" @click.stop>
-    <button class="flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-hover transition-colors" @click="toggle">
-      <span class="text-primary font-mono">
+  <div ref="el" class="text-xs ml-2 relative" @click.stop>
+    <button
+      class="p-btn-sm rounded bg-surface-3 flex gap-0.5 cursor-pointer transition-colors items-center hover:bg-surface-2"
+      @click="toggle"
+    >
+      <span class="text-accent font-mono">
         {{ formatVersion(selectedVersion) }}
       </span>
       <div class="i-carbon-chevron-down opacity-50" />
@@ -35,19 +38,19 @@ function formatVersion(ver: string) {
 
     <div
       v-if="expanded"
-      class="absolute left-0 top-full mt-1 w-52 max-h-60 overflow-y-auto bg-popover border border-main rounded shadow-lg z-50 py-1 font-mono"
+      class="font-mono mt-1 py-1 border border-border rounded bg-surface-1 max-h-60 w-52 shadow-lg left-0 top-full absolute z-50 overflow-y-auto"
     >
       <div
         v-for="ver in versions" :key="ver"
-        class="group flex items-center justify-between px-3 py-1 hover:bg-hover cursor-pointer"
-        :class="ver === selectedVersion ? 'text-primary font-bold' : 'text-muted'" @click="setVersion(ver)"
+        class="group p-item flex cursor-pointer items-center justify-between hover:bg-surface-2"
+        :class="ver === selectedVersion ? 'text-accent font-bold' : 'text-muted'" @click="setVersion(ver)"
       >
         <span>{{ formatVersion(ver) }}</span>
         <a
           v-if="ver !== 'latest'" :href="getReleaseLink(ver)" target="_blank"
-          class="opacity-0 group-hover:opacity-50 hover:opacity-100 transition-opacity" @click.stop
+          class="opacity-0 transition-opacity group-hover:opacity-50 hover:opacity-100" @click.stop
         >
-          <div class="i-carbon-launch text-[10px]" />
+          <div class="i-carbon-launch text-sm" />
         </a>
       </div>
     </div>
