@@ -60,6 +60,8 @@
     "vue": "catalog:build"
   },
   "lint-staged": {
-    "*": "eslint --fix"
+    "*.{js,ts,tsx,vue,md}": [
+      "eslint --cache --fix"
+    ]
   }
 }
