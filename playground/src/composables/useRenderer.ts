@@ -13,12 +13,12 @@ export function useRenderer(canvasRef: Ref<HTMLCanvasElement | null>) {
       return WebGLRenderer
 
     if (version === 'latest' || !isClient) {
-      const mod = await import('@sohne/shader.vista')
+      const mod = await import('@actis/core')
       WebGLRenderer = mod.WebGLRenderer
     }
     else {
       // Load from CDN
-      const cdnUrl = `https://esm.sh/@sohne/shader.vista@${version}`
+      const cdnUrl = `https://esm.sh/@actis/core@${version}`
       const mod = await import(/* @vite-ignore */ cdnUrl)
       WebGLRenderer = mod.WebGLRenderer
     }

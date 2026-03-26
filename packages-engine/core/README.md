@@ -1,9 +1,9 @@
-# SOHNE | Shader.Vista
+# SOHNE | Actis
 
 [![NPM version][npm-image]][npm-url]
 [![PR Welcome][npm-downloads-image]][npm-downloads-url]
 
-`Shader.Vista` is a lightweight WebGL rendering library designed to make it easy to work with WebGL fragment shaders, passes, and textures. It integrates seamlessly with React for modern web development.
+`Actis` is a lightweight WebGL rendering library designed to make it easy to work with WebGL fragment shaders, passes, and textures. It integrates seamlessly with React for modern web development.
 
 ## Features
 
@@ -13,26 +13,26 @@
 
 ## Installation
 
-You can install `Shader.Vista` via npm:
+You can install `Actis` via npm:
 
 ```bash
-npm install @sohne/shader.vista
+npm install @actis/core
 ```
 
 or via yarn:
 
 ```bash
-yarn add @sohne/shader.vista
+yarn add @actis/core
 ```
 
 ## Usage
 
 ### Basic Usage
 
-Here’s a simple example to get you started:
+Here's a simple example to get you started:
 
 ```tsx
-import WebGLRenderer from '@sohne/shader.vista'
+import WebGLRenderer from '@actis/core'
 import React, { useEffect, useRef } from 'react'
 
 // Main React functional component
@@ -122,8 +122,8 @@ For more advanced usage, such as adding multiple passes and using textures, refe
 Contributions are welcome! Please open an issue or submit a pull request on GitHub.
 
 [//]: (Externals)
-[npm-image]: https://img.shields.io/npm/v/@sohne/shader.vista.svg?style=flat-square&logo=npm
-[npm-url]: https://npmjs.org/package/@sohne/shader.vista
-[npm-downloads-image]: https://img.shields.io/npm/dm/@sohne/shader.vista.svg
-[npm-downloads-url]: https://npmcharts.com/compare/@sohne/shader.vista?minimal=true
+[npm-image]: https://img.shields.io/npm/v/@actis/core.svg?style=flat-square&logo=npm
+[npm-url]: https://npmjs.org/package/@actis/core
+[npm-downloads-image]: https://img.shields.io/npm/dm/@actis/core.svg
+[npm-downloads-url]: https://npmcharts.com/compare/@actis/core?minimal=true
 [//]: (EOF)

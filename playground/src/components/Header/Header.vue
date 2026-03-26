@@ -21,7 +21,7 @@ defineProps<{
     <div class="flex flex-shrink-0 gap-2 items-center sm:gap-3">
       <Share :code="code" />
       <a
-        href="https://github.com/SOHNE/Shader.Vista" target="_blank" class="i-simple-icons-github text-base icon-btn"
+        href="https://github.com/SOHNE/Actis" target="_blank" class="i-simple-icons-github text-base icon-btn"
         title="GitHub Repository"
       />
       <ThemeToggle />

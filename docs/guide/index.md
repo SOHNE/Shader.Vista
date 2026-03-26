@@ -1,11 +1,11 @@
 # Getting Started
 
-Shader.Vista is a lightweight WebGL rendering library designed to make it easy to work with WebGL fragment shaders, passes, and textures.
+Actis is a lightweight WebGL rendering library designed to make it easy to work with WebGL fragment shaders, passes, and textures.
 
 ## Installation
 
 ```bash
-pnpm add @sohne/shader.vista
+pnpm add @actis/core
 ```
 
 ## Basic Usage

@@ -3,7 +3,7 @@
 layout: home
 
 hero:
-  name: "Shader.Vista"
+  name: "Actis"
   text: "Versatile WebGL renderer"
   tagline: "Designed with multipass support in mind."
   actions:
@@ -12,7 +12,7 @@ hero:
       link: /getting-started
     - theme: alt
       text: View on GitHub
-      link: https://github.com/SOHNE/Shader.Vista
+      link: https://github.com/SOHNE/Actis
 
 features:
   - title: Multi-pass Rendering

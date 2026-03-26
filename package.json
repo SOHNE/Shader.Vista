@@ -1,9 +1,9 @@
 {
-  "name": "@sohne/shader.vista-monorepo",
+  "name": "actis-monorepo",
   "version": "26.3.0",
   "private": true,
   "packageManager": "pnpm@10.33.0",
-  "description": "Monorepo for Shader.Vista",
+  "description": "Monorepo for Actis",
   "scripts": {
     "taze": "taze minor -wIr && pnpm -r --parallel run update-post",
     "build": "pnpm -r --filter \"./packages-engine/**\" build",
@@ -21,6 +21,7 @@
     "taze": "catalog:utils"
   },
   "devDependencies": {
+    "@actis/core": "workspace:*",
     "@antfu/eslint-config": "catalog:dev-tools",
     "@antfu/ni": "catalog:utils",
     "@codemirror/autocomplete": "catalog:dev-tools",
@@ -32,7 +33,6 @@
     "@iconify-json/carbon": "catalog:dev-tools",
     "@iconify-json/simple-icons": "catalog:dev-tools",
     "@lezer/highlight": "catalog:dev-tools",
-    "@sohne/shader.vista": "workspace:*",
     "@types/node": "catalog:types",
     "@types/splitpanes": "catalog:docs",
     "@typescript/native-preview": "catalog:typescript",

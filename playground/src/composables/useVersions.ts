@@ -12,7 +12,7 @@ export function useVersions() {
   const selectedVersion = ref(urlParams.get('version') || 'latest')
 
   async function getVersionsList() {
-    const res = await fetch('https://data.jsdelivr.com/v1/package/npm/@sohne/shader.vista')
+    const res = await fetch('https://data.jsdelivr.com/v1/package/npm/@actis/core')
     const data = await res.json()
     const list = (data.versions as string[]).filter(v => !v.includes('-')).slice(0, 25)
 
@@ -40,8 +40,8 @@ export function useVersions() {
 
   function getReleaseLink(version: string) {
     if (version === 'latest')
-      return `https://github.com/zschzen/Shader.Vista/commit/${gitSha.value}`
-    return `https://github.com/zschzen/Shader.Vista/releases/tag/v${version}`
+      return `https://github.com/SOHNE/Actis/commit/${gitSha.value}`
+    return `https://github.com/SOHNE/Actis/releases/tag/v${version}`
   }
 
   return {

@@ -59,7 +59,7 @@ void main() {
 
   const pipelineCode = computed(() => {
     const passesJson = JSON.stringify(passes.value, null, 2)
-    return `// Setup Shader.Vista renderer
+    return `// Setup Actis renderer
 const passes = {
   passes: ${passesJson},
   textures: [],

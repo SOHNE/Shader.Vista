@@ -2,7 +2,7 @@ import { defineConfig } from 'vitepress'
 
 export default defineConfig({
   outDir: './dist',
-  title: 'Shader.Vista',
+  title: 'Actis',
   description: 'A versatile WebGL renderer designed with multipass support in mind.',
   themeConfig: {
     nav: [
@@ -14,14 +14,14 @@ export default defineConfig({
       {
         text: 'Introduction',
         items: [
-          { text: 'What is Shader.Vista?', link: '/' },
+          { text: 'What is Actis?', link: '/' },
           { text: 'Getting Started', link: '/guide/' },
         ],
       },
     ],
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/SOHNE/Shader.Vista' },
+      { icon: 'github', link: 'https://github.com/SOHNE/Actis' },
     ],
   },
   vite: {},

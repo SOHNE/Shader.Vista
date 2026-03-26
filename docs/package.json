@@ -1,5 +1,5 @@
 {
-  "name": "@sohne/shader.vista-docs",
+  "name": "@actis/docs",
   "version": "26.3.0",
   "private": true,
   "scripts": {
@@ -8,7 +8,7 @@
     "docs:preview": "vitepress preview"
   },
   "devDependencies": {
-    "@sohne/shader.vista": "workspace:*",
+    "@actis/core": "workspace:*",
     "unocss": "catalog:build",
     "vitepress": "catalog:build",
     "vue": "catalog:build"

@@ -1,5 +1,5 @@
 {
-  "name": "@sohne/shader.vista-config",
+  "name": "@actis/config",
   "version": "26.3.0",
   "private": true,
   "main": "dist/index.js",

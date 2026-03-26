@@ -1,5 +1,5 @@
 {
-  "name": "@sohne/shader.vista",
+  "name": "@actis/core",
   "type": "module",
   "version": "26.3.0",
   "description": "A versatile WebGL renderer designed with multipass support in mind.",
@@ -7,18 +7,19 @@
   "license": "GPL-3.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/SOHNE/Shader.Vista.git",
+    "url": "git+https://github.com/SOHNE/Actis.git",
     "directory": "packages-engine/core"
   },
   "bugs": {
-    "url": "https://github.com/SOHNE/Shader.Vista/issues"
+    "url": "https://github.com/SOHNE/Actis/issues"
   },
   "keywords": [
     "shader",
     "glsl",
     "multipass",
     "webgl",
-    "canvas"
+    "canvas",
+    "actis"
   ],
   "exports": {
     ".": {
