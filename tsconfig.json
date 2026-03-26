@@ -3,7 +3,9 @@
     "target": "es2018",
     "jsx": "preserve",
     "lib": [
-      "esnext"
+      "esnext",
+      "DOM",
+      "DOM.Iterable"
     ],
     "module": "esnext",
     "moduleResolution": "Bundler",
@@ -15,7 +17,8 @@
     "resolveJsonModule": true,
     "types": [
       "node",
-      "vite/client"
+      "vite/client",
+      "webgl2"
     ],
     "strict": true,
     "strictNullChecks": true,
