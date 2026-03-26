@@ -11,13 +11,20 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AssignmentPanel: typeof import('./components/Editor/TextureSelector/AssignmentPanel.vue')['default']
     Brand: typeof import('./components/Header/Brand.vue')['default']
-    Editor: typeof import('./components/Editor/Editor.vue')['default']
+    CodeMirror: typeof import('./components/Editor/CodeMirror.vue')['default']
     Header: typeof import('./components/Header/Header.vue')['default']
+    Index: typeof import('./components/Editor/TextureSelector/Index.vue')['default']
+    Item: typeof import('./components/Tabs/Item.vue')['default']
+    PassEditor: typeof import('./components/Editor/PassEditor.vue')['default']
     Playground: typeof import('./components/Playground.vue')['default']
     Preview: typeof import('./components/Preview/Preview.vue')['default']
     Share: typeof import('./components/Header/Share.vue')['default']
+    Slot: typeof import('./components/Editor/TextureSelector/Slot.vue')['default']
+    TabBar: typeof import('./components/Tabs/TabBar.vue')['default']
     ThemeToggle: typeof import('./components/Header/ThemeToggle.vue')['default']
+    Toggle: typeof import('./components/Editor/TextureSelector/Toggle.vue')['default']
     VersionSelector: typeof import('./components/Header/VersionSelector.vue')['default']
   }
 }
