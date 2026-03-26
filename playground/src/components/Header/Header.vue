@@ -10,18 +10,18 @@ defineProps<{
 </script>
 
 <template>
-  <header class="header-layout px-2 sm:px-3 py-1 sm:py-1.5 h-9 sm:h-10">
-    <div class="flex items-center gap-1 sm:gap-2 min-w-0 flex-shrink">
+  <header
+    class="px-2 py-1 border-b border-border bg-canvas flex h-9 items-center justify-between sm:px-3 sm:py-1.5 sm:h-10"
+  >
+    <div class="flex flex-shrink gap-1 min-w-0 items-center sm:gap-2">
       <Brand class="flex-shrink-0" />
       <VersionSelector class="flex-shrink" />
     </div>
 
-    <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+    <div class="flex flex-shrink-0 gap-2 items-center sm:gap-3">
       <Share :code="code" />
       <a
-        href="https://github.com/zschzen/Shader.Vista"
-        target="_blank"
-        class="i-simple-icons-github text-base icon-btn"
+        href="https://github.com/SOHNE/Shader.Vista" target="_blank" class="i-simple-icons-github text-base icon-btn"
         title="GitHub Repository"
       />
       <ThemeToggle />

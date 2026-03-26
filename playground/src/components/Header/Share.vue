@@ -15,7 +15,7 @@ const { share, copied } = useSharing({
 <template>
   <button
     class="icon-btn flex items-center"
-    :class="copied ? 'text-green-600 dark:text-green-400' : ''"
+    :class="copied ? 'success' : ''"
     :title="copied ? 'URL Copied!' : 'Share Code'"
     @click="share"
   >
