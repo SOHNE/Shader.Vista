@@ -38,42 +38,50 @@ watch(() => props.modelValue, (newVal) => {
   --cm-font-style-italic: italic;
 
   /* CodeMirror Theme Colors (Light) */
-  --cm-foreground: #393a34;
-  --cm-background: #ffffff;
-  --cm-keyword: #248459;
-  --cm-property: #998418;
-  --cm-punctuation: #393a34;
-  --cm-line-number: #999999;
-  --cm-comment: #a0ada0;
-  --cm-variable: #2e77a3;
-  --cm-string: #bc6060;
-  --cm-decorator: #6eafad;
-  --cm-definition-keyword: #2164a3;
-  --cm-line-highlight-background: #f1f1f1;
-  --cm-line-highlight-border: #e0e0e0;
-  --cm-selection-background: #e5ebf1;
-  --cm-tooltip-background: #fafafa;
-  --cm-border: #e2e2e2;
+  --cm-foreground: hsl(0 5% 21%);
+  --cm-background: hsl(0 0% 100%);
+  --cm-keyword: hsl(155 48% 30%);
+  --cm-property: hsl(45 69% 35%);
+  --cm-punctuation: hsl(0 5% 21%);
+  --cm-line-number: hsl(0 0% 60%);
+  --cm-comment: hsl(120 5% 65%);
+  --cm-variable: hsl(205 47% 41%);
+  --cm-string: hsl(355 43% 55%);
+  --cm-decorator: hsl(178 25% 56%);
+  --cm-definition-keyword: hsl(205 77% 38%);
+  --cm-line-highlight-background: hsl(0 0% 95%);
+  --cm-line-highlight-border: hsl(0 0% 88%);
+  --cm-selection-background: hsl(210 43% 92%);
+  --cm-tooltip-background: hsl(0 0% 98%);
+  --cm-border: hsl(0 0% 89%);
+  --cm-word-highlight-background: hsl(210 91% 61% / 0.15);
+  --cm-matching-bracket-background: hsl(0 0% 94%);
+  --cm-nonmatching-bracket-background: hsl(355 100% 94%);
+  --cm-bracket-underline-offset: calc(var(--cm-font-size) * var(--cm-line-height) * 0.15);
 }
 
 .dark .editor-container .cm-editor {
   /* CodeMirror Theme Colors (Dark) */
-  --cm-foreground: #d4d4d4;
-  --cm-background: #1e1e1e;
-  --cm-keyword: #569cd6;
-  --cm-property: #9cdcfe;
-  --cm-punctuation: #d4d4d4;
-  --cm-line-number: #858585;
-  --cm-comment: #6a9955;
-  --cm-variable: #9cdcfe;
-  --cm-string: #ce9178;
-  --cm-decorator: #dcdcaa;
-  --cm-definition-keyword: #569cd6;
-  --cm-line-highlight-background: #2c2c2c;
-  --cm-line-highlight-border: #3e3e3e;
-  --cm-selection-background: #264f78;
-  --cm-tooltip-background: #252526;
-  --cm-border: #454545;
+  --cm-foreground: hsl(0 0% 83%);
+  --cm-background: hsl(0 0% 12%);
+  --cm-keyword: hsl(212 51% 59%);
+  --cm-property: hsl(207 84% 85%);
+  --cm-punctuation: hsl(0 0% 83%);
+  --cm-line-number: hsl(0 0% 52%);
+  --cm-comment: hsl(108 32% 47%);
+  --cm-variable: hsl(207 84% 85%);
+  --cm-string: hsl(15 66% 64%);
+  --cm-decorator: hsl(48 53% 75%);
+  --cm-definition-keyword: hsl(212 51% 59%);
+  --cm-line-highlight-background: hsl(0 0% 17%);
+  --cm-line-highlight-border: hsl(0 0% 24%);
+  --cm-selection-background: hsl(210 52% 31%);
+  --cm-tooltip-background: hsl(0 0% 15%);
+  --cm-border: hsl(0 0% 27%);
+  --cm-word-highlight-background: hsl(210 91% 61% / 0.25);
+  --cm-matching-bracket-background: hsl(0 0% 23%);
+  --cm-nonmatching-bracket-background: hsl(355 56% 22%);
+  --cm-bracket-underline-offset: calc(var(--cm-font-size) * var(--cm-line-height) * 0.15);
 }
 
 /* CodeMirror Fold Markers */

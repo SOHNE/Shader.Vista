@@ -5,11 +5,13 @@ import { EditorState } from '@codemirror/state'
 import { EditorView, scrollPastEnd } from '@codemirror/view'
 import { basicSetup } from 'codemirror'
 import { onMounted } from 'vue'
+import { nonMatchingBracketPlugin } from '../plugins/bracket-match'
 import { glslCompletions } from '../plugins/completions'
 import { codeFoldingExtension } from '../plugins/folding'
 import { scrollbarRuler, scrollbarRulerTheme } from '../plugins/scrollbar'
 import { selectionLineHighlightPlugin } from '../plugins/selection'
 import { vitesse } from '../plugins/theme'
+import { wordHighlightPlugin, wordHighlightTheme } from '../plugins/word-highlight'
 
 export function useEditor(
   container: Ref<HTMLDivElement | null>,
@@ -27,7 +29,10 @@ export function useEditor(
             basicSetup,
             cpp(),
             vitesse,
+            nonMatchingBracketPlugin,
+            wordHighlightTheme,
             selectionLineHighlightPlugin,
+            wordHighlightPlugin,
             scrollbarRuler,
             scrollbarRulerTheme,
             scrollPastEnd(),

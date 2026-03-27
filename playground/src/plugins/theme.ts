@@ -68,8 +68,16 @@ export const vitesseTheme = EditorView.theme({
   '.cm-activeLine': { backgroundColor: highlightBackground, border: '1px solid var(--cm-line-highlight-border)' },
   '.cm-selectionMatch': { backgroundColor: 'var(--cm-selection-match-background, #aafe661a)' },
 
-  '&.cm-focused .cm-matchingBracket, &.cm-focused .cm-nonmatchingBracket': {
-    backgroundColor: 'transparent',
+  // Bracket Highlighting
+  '&.cm-focused .cm-matchingBracket': {
+    backgroundColor: 'var(--cm-matching-bracket-background)',
+    textDecoration: 'underline',
+    textUnderlineOffset: 'var(--cm-bracket-underline-offset, 2px)',
+  },
+  '&.cm-focused .cm-nonmatchingBracket': {
+    backgroundColor: 'var(--cm-nonmatching-bracket-background)',
+    outline: '1px solid color-mix(in srgb, var(--cm-nonmatching-bracket-background), white 25%)',
+    borderRadius: '2px',
   },
 
   '.cm-gutters': {
