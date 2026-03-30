@@ -43,7 +43,7 @@ export function useRenderer(canvasRef: Ref<HTMLCanvasElement | null>) {
             renderer.animationRequestID = -1
           }
           renderer.passes = null
-          renderer.textureMap = {}
+          renderer.textureMap = new Map()
           renderer.reset()
           originalSetup(config)
         }
@@ -68,7 +68,7 @@ export function useRenderer(canvasRef: Ref<HTMLCanvasElement | null>) {
             while (current) {
               const passName = current.shader.passName
               if (passName) {
-                renderer.textureMap[passName] = current.texture
+                renderer.textureMap.set(passName, current.texture)
               }
               current = current.next
             }
@@ -79,7 +79,7 @@ export function useRenderer(canvasRef: Ref<HTMLCanvasElement | null>) {
                 const passName = current.shader.passName
                 const passConf = lastConfig.passes.find((p: any) => p.name === passName)
                 if (passConf && passConf.textures) {
-                  current.textures = passConf.textures.map((tName: string) => renderer.textureMap[tName])
+                  current.textures = passConf.textures.map((tName: string) => renderer.textureMap.get(tName))
                 }
                 current = current.next
               }

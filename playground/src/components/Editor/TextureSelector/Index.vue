@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { PassConfig } from '../../../composables/usePasses'
+import type { PassConfig } from '@actis/core'
 import { computed, ref, watch } from 'vue'
 import AssignmentPanel from './AssignmentPanel.vue'
 import Slot from './Slot.vue'

@@ -1,10 +1,5 @@
+import type { PassConfig } from '@actis/core'
 import { computed, ref } from 'vue'
-
-export type PassConfig = {
-  name: string
-  fragmentShader: string
-  textures: string[]
-}
 
 export function usePasses(initialPasses: PassConfig[]) {
   // Use a deep copy to avoid modifying the original default object

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { PassConfig } from '../../../../composables/usePasses'
+import type { PassConfig } from '@actis/core'
 
 type Props = {
   selectingIndex: number
