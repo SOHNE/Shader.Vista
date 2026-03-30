@@ -1,0 +1,57 @@
+# Reference: Template structure inspired by unocss/unocss
+name: 🐞 Bug report
+description: Report a problem with Actis
+labels: [pending triage]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        We appreciate you taking the time to report this issue! If you have a usage question
+        or aren't certain if this qualifies as a bug, please consider:
+
+        - Going through the `README.md` for the package
+        - Starting a discussion on [GitHub Discussions](https://github.com/SOHNE/Actis/discussions)
+
+  - type: input
+    id: version
+    attributes:
+      label: Actis version
+    validations:
+      required: true
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: What's the issue?
+      description: Please describe the bug clearly and concisely. If you're planning to submit a pull request for this, mention it in the description.
+      placeholder: Describe the bug...
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Share a link to [Playground](https://actisgl.netlify.app/play/) or a GitHub repository that demonstrates the issue. A [minimal reproduction](https://stackoverflow.com/help/minimal-reproducible-example) helps us resolve issues faster, unless the problem is immediately obvious from your description.
+      placeholder: Provide a reproduction link...
+    validations:
+      required: true
+  - type: textarea
+    id: system-info
+    attributes:
+      label: System Information
+      placeholder: OS, Browser, Framework versions...
+    validations:
+      required: false
+  - type: checkboxes
+    id: checkboxes
+    attributes:
+      label: Before submitting
+      description: Please confirm you've completed these steps
+      options:
+        - label: I've read the [Contributing Guidelines](https://github.com/SOHNE/Actis/blob/main/.github/CONTRIBUTING.md).
+          required: true
+        - label: I've searched for [existing issues](https://github.com/SOHNE/Actis/issues) to avoid duplicates.
+          required: true
+        - label: This is a specific bug, not a general Q&A. For questions, use [GitHub Discussions](https://github.com/SOHNE/Actis/discussions).
+          required: true
+        - label: The reproduction demonstrates a [minimal reproducible example](https://stackoverflow.com/help/minimal-reproducible-example).
+          required: true
