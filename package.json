@@ -17,9 +17,6 @@
     "prepare": "husky",
     "typecheck": "tsgo --noEmit"
   },
-  "dependencies": {
-    "taze": "catalog:utils"
-  },
   "devDependencies": {
     "@actis/core": "workspace:*",
     "@antfu/eslint-config": "catalog:dev-tools",
