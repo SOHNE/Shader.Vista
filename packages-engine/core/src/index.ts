@@ -1,4 +1,4 @@
-export { default as Pass } from './pass'
-export { default as WebGLRenderer } from './renderer'
-export * from './renderer'
-export { default as Shader } from './shader'
+export { WebGLRenderer } from './engine'
+export { Pass } from './pass'
+export { Shader } from './shader'
+export type { PassConfig, RendererConfig } from './types'

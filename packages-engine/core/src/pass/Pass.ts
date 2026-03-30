@@ -1,5 +1,9 @@
-import type Shader from './shader'
+import type Shader from '../shader/Shader'
 
+/**
+ * Represents a render pass in the WebGL pipeline.
+ * Responsible for managing framebuffer, texture, and draw calls for a single pass.
+ */
 export default class Pass {
   gl: WebGLRenderingContext
   shader: Shader
@@ -30,8 +34,7 @@ export default class Pass {
     this.next = null
     this.offscreen = offscreen
     this.textures = textures
-    this.positionAttributeLocation
-      = this.shader.getAttribLocation('a_position')
+    this.positionAttributeLocation = this.shader.getAttribLocation('a_position')
     this.positionBuffer = this.createPositionBuffer() as WebGLBuffer
   }
 
@@ -53,9 +56,7 @@ export default class Pass {
     this.height = height
     if (this.offscreen) {
       this.texture = this.createTexture() as WebGLTexture
-      this.framebuffer = this.createFramebuffer(
-        this.texture,
-      ) as WebGLFramebuffer
+      this.framebuffer = this.createFramebuffer(this.texture) as WebGLFramebuffer
     }
   }
 
@@ -99,26 +100,10 @@ export default class Pass {
   private createTexture() {
     const texture = this.gl.createTexture()
     this.gl.bindTexture(this.gl.TEXTURE_2D, texture)
-    this.gl.texParameteri(
-      this.gl.TEXTURE_2D,
-      this.gl.TEXTURE_WRAP_S,
-      this.gl.CLAMP_TO_EDGE,
-    )
-    this.gl.texParameteri(
-      this.gl.TEXTURE_2D,
-      this.gl.TEXTURE_WRAP_T,
-      this.gl.CLAMP_TO_EDGE,
-    )
-    this.gl.texParameteri(
-      this.gl.TEXTURE_2D,
-      this.gl.TEXTURE_MIN_FILTER,
-      this.gl.NEAREST,
-    )
-    this.gl.texParameteri(
-      this.gl.TEXTURE_2D,
-      this.gl.TEXTURE_MAG_FILTER,
-      this.gl.NEAREST,
-    )
+    this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.CLAMP_TO_EDGE)
+    this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.CLAMP_TO_EDGE)
+    this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.NEAREST)
+    this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.NEAREST)
     this.gl.texImage2D(
       this.gl.TEXTURE_2D,
       0,

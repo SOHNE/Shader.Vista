@@ -1,29 +1,29 @@
+import type { ShaderError, UniformType } from '../types'
+
 const ERROR_LOG_REGEX = /ERROR: 0:(\d+): (.*)(?=\n|$)/
 
+/**
+ * Compiles and manages a WebGL shader program.
+ * Responsible for compiling, linking, and providing access to uniforms and attributes.
+ */
 export default class Shader {
   private gl: WebGLRenderingContext
   private program: WebGLProgram
-  private uniformLocations: { [name: string]: WebGLUniformLocation } = {}
-  private onError: (details: {
-    passName: string
-    coords: { line: number, message: string }
-  }) => void
-
+  private uniformLocations: Map<string, WebGLUniformLocation>
+  private onError: (details: ShaderError) => void
   private passName: string
 
   constructor(
     gl: WebGLRenderingContext,
     vertexSource: string | undefined,
     fragmentSource: string,
-    onError: (details: {
-      passName: string
-      coords: { line: number, message: string }
-    }) => void,
+    onError: (details: ShaderError) => void,
     passName: string,
   ) {
     this.gl = gl
     this.onError = onError
     this.passName = passName
+    this.uniformLocations = new Map()
 
     const vertexShader = this.compileShader(
       vertexSource || this.defaultVertexShader(),
@@ -59,10 +59,7 @@ export default class Shader {
     return shader
   }
 
-  private extractErrorCoords(log: string): {
-    line: number
-    message: string
-  } {
+  private extractErrorCoords(log: string): { line: number, message: string } {
     const match = ERROR_LOG_REGEX.exec(log)
     if (match) {
       return {
@@ -99,15 +96,13 @@ export default class Shader {
     this.gl.useProgram(this.program)
   }
 
-  public setUniform(name: string, type: string, ...values: any[]): void {
-    if (!this.uniformLocations[name]) {
-      this.uniformLocations[name] = this.gl.getUniformLocation(
-        this.program,
-        name,
-      ) as WebGLUniformLocation
+  public setUniform(name: string, type: UniformType, ...values: any[]): void {
+    let location = this.uniformLocations.get(name)
+    if (!location) {
+      location = this.gl.getUniformLocation(this.program, name) as WebGLUniformLocation
+      this.uniformLocations.set(name, location)
     }
 
-    const location = this.uniformLocations[name]
     switch (type) {
       case '1f':
         this.gl.uniform1f(location, values[0])
