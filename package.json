@@ -12,8 +12,8 @@
     "play": "pnpm -C playground run dev",
     "test": "pnpm -r test",
     "deploy": "nr build && nr -C docs docs:build && nr -C playground build",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "lint": "eslint --cache .",
+    "lint:fix": "nr lint --fix",
     "prepare": "husky",
     "typecheck": "tsgo --noEmit"
   },
@@ -58,6 +58,11 @@
     "vite-plugin-inspect": "catalog:vite",
     "vitest": "catalog:dev-tools",
     "vue": "catalog:build"
+  },
+  "resolutions": {
+    "@typescript-eslint/utils": "catalog:typescript",
+    "rollup": "catalog:build",
+    "vite": "catalog:vite"
   },
   "lint-staged": {
     "*.{js,ts,tsx,vue,md}": [
