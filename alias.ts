@@ -4,5 +4,4 @@ const r = (p: string) => resolve(__dirname, p)
 
 export const aliasEngine: Record<string, string> = {
   '@actis/core': r('./packages-engine/core/src/index.ts'),
-  '@actis/config': r('./packages-engine/config/src/index.ts'),
 }
