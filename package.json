@@ -14,6 +14,7 @@
     "deploy": "nr build && nr -C docs docs:build && nr -C playground build",
     "lint": "eslint --cache .",
     "lint:fix": "nr lint --fix",
+    "release": "bumpp -r --excute=\"pnpm i\"",
     "prepare": "husky",
     "typecheck": "tsgo --noEmit"
   },
@@ -38,6 +39,7 @@
     "@unocss/preset-web-fonts": "catalog:docs",
     "@vitejs/plugin-vue": "catalog:vite",
     "@vueuse/core": "catalog:shared",
+    "bumpp": "catalog:build",
     "codemirror": "catalog:dev-tools",
     "eslint": "catalog:dev-tools",
     "eslint-plugin-format": "catalog:dev-tools",
