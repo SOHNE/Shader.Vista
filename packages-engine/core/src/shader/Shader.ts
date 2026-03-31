@@ -1,15 +1,16 @@
-import type { ShaderError, UniformType } from '../types'
+import type { ProgramInfo } from 'twgl.js'
+import type { ShaderError } from '../types'
+import * as twgl from 'twgl.js'
 
 const ERROR_LOG_REGEX = /ERROR: 0:(\d+): (.*)(?=\n|$)/
 
 /**
- * Compiles and manages a WebGL shader program.
+ * Compiles and manages a WebGL shader program using twgl.js.
  * Responsible for compiling, linking, and providing access to uniforms and attributes.
  */
 export default class Shader {
   private gl: WebGLRenderingContext
-  private program: WebGLProgram
-  private uniformLocations: Map<string, WebGLUniformLocation>
+  public programInfo: ProgramInfo
   private onError: (details: ShaderError) => void
   private passName: string
 
@@ -23,40 +24,25 @@ export default class Shader {
     this.gl = gl
     this.onError = onError
     this.passName = passName
-    this.uniformLocations = new Map()
 
-    const vertexShader = this.compileShader(
+    const sources = [
       vertexSource || this.defaultVertexShader(),
-      gl.VERTEX_SHADER,
-    )
-
-    const fragmentShader = this.compileShader(
       fragmentSource,
-      gl.FRAGMENT_SHADER,
-    )
-    this.program = this.linkProgram(vertexShader, fragmentShader)
-  }
+    ]
 
-  private compileShader(source: string, type: number): WebGLShader {
-    const shader = this.gl.createShader(type)
-    if (!shader)
-      throw new Error('Failed to create shader')
-
-    this.gl.shaderSource(shader, source)
-    this.gl.compileShader(shader)
-
-    if (!this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
-      const log = this.gl.getShaderInfoLog(shader)
-      this.gl.deleteShader(shader)
-      const coords = this.extractErrorCoords(log || '')
+    const programInfo = twgl.createProgramInfo(this.gl, sources, (msg) => {
+      const coords = this.extractErrorCoords(msg)
       this.onError({
         passName: this.passName,
         coords,
       })
-      throw new Error(`Failed to compile shader: ${log}`)
+    })
+
+    if (!programInfo) {
+      throw new Error(`Failed to create program for pass ${passName}`)
     }
 
-    return shader
+    this.programInfo = programInfo
   }
 
   private extractErrorCoords(log: string): { line: number, message: string } {
@@ -67,63 +53,19 @@ export default class Shader {
         message: match[2],
       }
     }
-    return { line: 0, message: '' }
-  }
-
-  private linkProgram(
-    vertexShader: WebGLShader | undefined,
-    fragmentShader: WebGLShader,
-  ): WebGLProgram {
-    const program = this.gl.createProgram()
-    if (!program)
-      throw new Error('Failed to create program')
-
-    if (vertexShader)
-      this.gl.attachShader(program, vertexShader)
-    this.gl.attachShader(program, fragmentShader)
-    this.gl.linkProgram(program)
-
-    if (!this.gl.getProgramParameter(program, this.gl.LINK_STATUS)) {
-      const log = this.gl.getProgramInfoLog(program)
-      this.gl.deleteProgram(program)
-      throw new Error(`Failed to link program: ${log}`)
-    }
-
-    return program
+    return { line: 0, message: log }
   }
 
   public use(): void {
-    this.gl.useProgram(this.program)
+    this.gl.useProgram(this.programInfo.program)
   }
 
-  public setUniform(name: string, type: UniformType, ...values: any[]): void {
-    let location = this.uniformLocations.get(name)
-    if (!location) {
-      location = this.gl.getUniformLocation(this.program, name) as WebGLUniformLocation
-      this.uniformLocations.set(name, location)
-    }
-
-    switch (type) {
-      case '1f':
-        this.gl.uniform1f(location, values[0])
-        break
-      case '1i':
-        this.gl.uniform1i(location, values[0])
-        break
-      case '2fv':
-        this.gl.uniform2fv(location, values[0])
-        break
-      case '3fv':
-        this.gl.uniform3fv(location, values[0])
-        break
-      case '4fv':
-        this.gl.uniform4fv(location, values[0])
-        break
-    }
+  public setUniforms(uniforms: { [key: string]: any }): void {
+    twgl.setUniforms(this.programInfo, uniforms)
   }
 
   public getAttribLocation(name: string): number {
-    return this.gl.getAttribLocation(this.program, name)
+    return this.gl.getAttribLocation(this.programInfo.program, name)
   }
 
   private defaultVertexShader(): string {

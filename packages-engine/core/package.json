@@ -39,6 +39,9 @@
     "dev": "tsdown --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "dependencies": {
+    "twgl.js": "catalog:rendering"
+  },
   "devDependencies": {
     "@types/webgl2": "catalog:types",
     "tsdown": "catalog:build",

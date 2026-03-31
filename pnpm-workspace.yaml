@@ -15,7 +15,6 @@ packages:
   - docs
   - playground
   - 'examples/*'
-
 overrides:
   esbuild: ^0.27.4
   vue: catalog:build
@@ -58,6 +57,8 @@ catalogs:
     '@types/splitpanes': ^2.2.6
     '@unocss/preset-web-fonts': ^66.6.7
     splitpanes: ^4.0.4
+  rendering:
+    twgl.js: ^7.0.0
 
   shared:
     '@vueuse/core': ^14.2.1

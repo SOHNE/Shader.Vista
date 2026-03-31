@@ -29,7 +29,7 @@ export default class WebGLRenderer {
 
   constructor(
     canvas: HTMLCanvasElement,
-    onError: (details: { passName: string, coords: { line: number, message: string } }) => void,
+    onError?: (details: { passName: string, coords: { line: number, message: string } }) => void,
   ) {
     this.canvas = canvas
     this.animationRequestID = -1
@@ -37,7 +37,9 @@ export default class WebGLRenderer {
     this.passes = null
     this.textureMap = new Map()
     this.now = new Date()
-    this.onError = onError
+    this.onError = onError || (({ passName, coords }) => {
+      console.error(`[Actis] Error in pass "${passName}" at line ${coords.line}: ${coords.message}`)
+    })
 
     this.mouseX = 0
     this.mouseY = 0
@@ -142,22 +144,24 @@ export default class WebGLRenderer {
   }
 
   private updateUniforms(pass: Pass): void {
-    pass.shader.setUniform('u_date', '4fv', [
-      this.now.getFullYear(),
-      this.now.getMonth() + 1,
-      this.now.getDate(),
-      this.now.getHours() * 3600
-      + this.now.getMinutes() * 60
-      + this.now.getSeconds()
-      + this.now.getMilliseconds() / 1000,
-    ])
-
-    pass.shader.setUniform('u_frame', '1i', this.currentFrame)
-    pass.shader.setUniform('u_time', '1f', this.currentTime)
-    pass.shader.setUniform('u_timeDelta', '1f', this.timeDelta)
-    pass.shader.setUniform('u_frameRate', '1f', this.frameRate)
-    pass.shader.setUniform('u_resolution', '2fv', [pass.width, pass.height])
-    pass.shader.setUniform('u_mouse', '2fv', [this.mouseX, this.mouseY])
+    const uniforms = {
+      u_date: [
+        this.now.getFullYear(),
+        this.now.getMonth() + 1,
+        this.now.getDate(),
+        this.now.getHours() * 3600
+        + this.now.getMinutes() * 60
+        + this.now.getSeconds()
+        + this.now.getMilliseconds() / 1000,
+      ],
+      u_frame: this.currentFrame,
+      u_time: this.currentTime,
+      u_timeDelta: this.timeDelta,
+      u_frameRate: this.frameRate,
+      u_resolution: [pass.width, pass.height],
+      u_mouse: [this.mouseX, this.mouseY],
+    }
+    pass.shader.setUniforms(uniforms)
   }
 
   private updateTime(currentTime?: number): void {
@@ -200,6 +204,15 @@ export default class WebGLRenderer {
   }
 
   public setup(config: RendererConfig): void {
+    // Clear previous state
+    if (this.animationRequestID !== -1) {
+      cancelAnimationFrame(this.animationRequestID)
+      this.animationRequestID = -1
+    }
+    this.passes = null
+    this.textureMap.clear()
+    this.reset()
+
     const displayWidth = Math.floor(this.canvas.clientWidth * this.realToCSSPixels)
     const displayHeight = Math.floor(this.canvas.clientHeight * this.realToCSSPixels)
 
@@ -219,12 +232,20 @@ export default class WebGLRenderer {
           displayWidth,
           displayHeight,
           offscreen,
-          passConfig.textures.map(textureName => this.textureMap.get(textureName) as WebGLTexture),
+          passConfig.textures.map((textureName) => {
+            const texture = this.textureMap.get(textureName)
+            if (!texture) {
+              console.warn(`Texture ${textureName} not found for pass ${passConfig.name}`)
+            }
+            return texture as WebGLTexture
+          }).filter(Boolean),
         )
         this.addPass(pass)
 
         // Map this pass's texture to its name
-        this.textureMap.set(passConfig.name, pass.texture)
+        if (pass.texture) {
+          this.textureMap.set(passConfig.name, pass.texture)
+        }
       }
       catch (error: unknown) {
         console.error(`Error in pass ${passConfig.name}: ${(error as any).message}`)
