@@ -46,6 +46,7 @@
     "husky": "catalog:dev-tools",
     "lint-staged": "catalog:dev-tools",
     "lz-string": "catalog:shared",
+    "rollup": "catalog:build",
     "splitpanes": "catalog:docs",
     "taze": "catalog:utils",
     "tsx": "catalog:typescript",
@@ -59,7 +60,6 @@
     "vue": "catalog:build"
   },
   "resolutions": {
-    "@typescript-eslint/utils": "catalog:typescript",
     "rollup": "catalog:build",
     "vite": "catalog:vite"
   },
