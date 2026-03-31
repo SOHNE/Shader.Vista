@@ -51,8 +51,8 @@ catalogs:
       specifier: ^1.2.20
       version: 1.2.20
     '@iconify-json/simple-icons':
-      specifier: ^1.2.75
-      version: 1.2.75
+      specifier: ^1.2.76
+      version: 1.2.76
     '@lezer/highlight':
       specifier: ^1.2.3
       version: 1.2.3
@@ -176,7 +176,7 @@ importers:
         version: 1.2.20
       '@iconify-json/simple-icons':
         specifier: catalog:dev-tools
-        version: 1.2.75
+        version: 1.2.76
       '@lezer/highlight':
         specifier: catalog:dev-tools
         version: 1.2.3
@@ -812,6 +812,9 @@ packages:
 
   '@iconify-json/simple-icons@1.2.75':
     resolution: {integrity: sha512-KvcCUbvcBWb0sbqLIxHoY8z5/piXY08wcY9gfMhF+ph3AfzGMaSmZFkUY71HSXAljQngXkgs4bdKdekO0HQWvg==}
+
+  '@iconify-json/simple-icons@1.2.76':
+    resolution: {integrity: sha512-lLRlA8yaf+1L5VCPRvR9lynoSklsddKHEylchmZJKdj/q2xVQ1ZAEJ8SCQlv9cbgtMefnlyM98U+8Si2aoFZPA==}
 
   '@iconify/types@2.0.0':
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
@@ -4010,6 +4013,10 @@ snapshots:
       '@iconify/types': 2.0.0
 
   '@iconify-json/simple-icons@1.2.75':
+    dependencies:
+      '@iconify/types': 2.0.0
+
+  '@iconify-json/simple-icons@1.2.76':
     dependencies:
       '@iconify/types': 2.0.0
 

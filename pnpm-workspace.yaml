@@ -32,7 +32,7 @@ catalogs:
     '@codemirror/state': ^6.6.0
     '@codemirror/view': ^6.40.0
     '@iconify-json/carbon': ^1.2.20
-    '@iconify-json/simple-icons': ^1.2.75
+    '@iconify-json/simple-icons': ^1.2.76
     '@lezer/highlight': ^1.2.3
     '@unocss/eslint-plugin': ^66.6.7
     codemirror: ^6.0.2
