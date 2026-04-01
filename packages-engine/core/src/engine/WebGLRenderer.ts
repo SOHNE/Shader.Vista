@@ -1,6 +1,7 @@
 import type { PassConfig, RendererConfig } from '../types'
 import Pass from '../pass/Pass'
 import Shader from '../shader/Shader'
+import { getScreenTriangle } from './ScreenTriangle'
 
 /**
  * Renderer class responsible for managing the WebGL context, render passes, and animation loop.
@@ -215,6 +216,7 @@ export default class WebGLRenderer {
 
     const displayWidth = Math.floor(this.canvas.clientWidth * this.realToCSSPixels)
     const displayHeight = Math.floor(this.canvas.clientHeight * this.realToCSSPixels)
+    const geometry = getScreenTriangle(this.gl)
 
     config.passes.forEach((passConfig: PassConfig) => {
       try {
@@ -229,6 +231,7 @@ export default class WebGLRenderer {
         const pass = new Pass(
           this.gl,
           shader,
+          geometry,
           displayWidth,
           displayHeight,
           offscreen,

@@ -1,6 +1,6 @@
 import type { ProgramInfo } from 'twgl.js'
 import type { ShaderError } from '../types'
-import * as twgl from 'twgl.js'
+import { createProgramInfo, setUniforms } from 'twgl.js'
 
 const ERROR_LOG_REGEX = /ERROR: 0:(\d+): (.*)(?=\n|$)/
 
@@ -30,7 +30,7 @@ export default class Shader {
       fragmentSource,
     ]
 
-    const programInfo = twgl.createProgramInfo(this.gl, sources, (msg) => {
+    const programInfo = createProgramInfo(this.gl, sources, (msg) => {
       const coords = this.extractErrorCoords(msg)
       this.onError({
         passName: this.passName,
@@ -61,7 +61,7 @@ export default class Shader {
   }
 
   public setUniforms(uniforms: { [key: string]: any }): void {
-    twgl.setUniforms(this.programInfo, uniforms)
+    setUniforms(this.programInfo, uniforms)
   }
 
   public getAttribLocation(name: string): number {
