@@ -12,7 +12,6 @@ export default class Pass {
   width: number
   height: number
   fbo: FBO | null
-  next: Pass | null
   offscreen: boolean
   textures: WebGLTexture[]
   bufferInfo: BufferInfo
@@ -33,7 +32,6 @@ export default class Pass {
     this.height = height
     this.offscreen = offscreen
     this.textures = textures
-    this.next = null
 
     if (this.offscreen) {
       this.fbo = new FBO(gl, width, height)

@@ -12,7 +12,7 @@ export default class Shader {
   private gl: WebGLRenderingContext
   public programInfo: ProgramInfo
   private onError: (details: ShaderError) => void
-  private passName: string
+  public readonly passName: string
 
   constructor(
     gl: WebGLRenderingContext,

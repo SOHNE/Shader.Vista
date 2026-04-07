@@ -1,5 +1,6 @@
 import type { PassConfig, RendererConfig } from '../types'
 import Pass from '../pass/Pass'
+import Pipeline from '../pipeline/Pipeline'
 import Shader from '../shader/Shader'
 import { getScreenTriangle } from './ScreenTriangle'
 
@@ -8,9 +9,10 @@ import { getScreenTriangle } from './ScreenTriangle'
  */
 export default class WebGLRenderer {
   private gl: WebGLRenderingContext
-  private passes: Pass | null
+  private pipeline: Pipeline
   private canvas: HTMLCanvasElement
   private animationRequestID: number
+  private passConfigs: Map<string, PassConfig>
   private textureMap: Map<string, WebGLTexture>
   private now: Date
   private onError: (details: { passName: string, coords: { line: number, message: string } }) => void
@@ -35,7 +37,8 @@ export default class WebGLRenderer {
     this.canvas = canvas
     this.animationRequestID = -1
     this.gl = this.initializeWebGLContext(canvas)
-    this.passes = null
+    this.pipeline = new Pipeline()
+    this.passConfigs = new Map()
     this.textureMap = new Map()
     this.now = new Date()
     this.onError = onError || (({ passName, coords }) => {
@@ -116,16 +119,19 @@ export default class WebGLRenderer {
   }
 
   public addPass(pass: Pass): void {
-    if (this.passes) {
-      let current = this.passes
-      while (current.next) {
-        current = current.next
-      }
-      current.next = pass
-    }
-    else {
-      this.passes = pass
-    }
+    this.pipeline.add(pass.shader.passName, pass)
+  }
+
+  public getPass(name: string): Pass | undefined {
+    return this.pipeline.get(name)
+  }
+
+  public getPasses(): Pass[] {
+    return this.pipeline.toArray()
+  }
+
+  public forEachPass(callback: (pass: Pass) => void): void {
+    this.pipeline.forEach(callback)
   }
 
   private resizeCanvasToDisplaySize(): void {
@@ -136,11 +142,8 @@ export default class WebGLRenderer {
       this.canvas.width = displayWidth
       this.canvas.height = displayHeight
 
-      let current = this.passes
-      while (current) {
-        current.resize(displayWidth, displayHeight)
-        current = current.next
-      }
+      this.pipeline.resize(displayWidth, displayHeight)
+      this.syncPassTextures()
     }
   }
 
@@ -190,13 +193,11 @@ export default class WebGLRenderer {
     this.updateTime(currentTime)
     this.resizeCanvasToDisplaySize()
 
-    let current = this.passes
-    while (current) {
-      current.use()
-      this.updateUniforms(current)
-      current.draw()
-      current = current.next
-    }
+    this.pipeline.forEach((pass) => {
+      pass.use()
+      this.updateUniforms(pass)
+      pass.draw()
+    })
 
     // FIXME: Placed here just to maintain a render loop. Must be redone later.
     if (typeof requestAnimationFrame !== 'undefined') {
@@ -210,7 +211,8 @@ export default class WebGLRenderer {
       cancelAnimationFrame(this.animationRequestID)
       this.animationRequestID = -1
     }
-    this.passes = null
+    this.pipeline.clear()
+    this.passConfigs.clear()
     this.textureMap.clear()
     this.reset()
 
@@ -219,6 +221,8 @@ export default class WebGLRenderer {
     const geometry = getScreenTriangle(this.gl)
 
     config.passes.forEach((passConfig: PassConfig) => {
+      this.passConfigs.set(passConfig.name, passConfig)
+
       try {
         const shader = new Shader(
           this.gl,
@@ -235,15 +239,9 @@ export default class WebGLRenderer {
           displayWidth,
           displayHeight,
           offscreen,
-          passConfig.textures.map((textureName) => {
-            const texture = this.textureMap.get(textureName)
-            if (!texture) {
-              console.warn(`Texture ${textureName} not found for pass ${passConfig.name}`)
-            }
-            return texture as WebGLTexture
-          }).filter(Boolean),
+          [],
         )
-        this.addPass(pass)
+        this.pipeline.add(passConfig.name, pass, passConfig.textures)
 
         // Map this pass's texture to its name
         if (pass.texture) {
@@ -254,6 +252,8 @@ export default class WebGLRenderer {
         console.error(`Error in pass ${passConfig.name}: ${(error as any).message}`)
       }
     })
+
+    this.syncPassTextures()
   }
 
   public play(): void {
@@ -271,5 +271,31 @@ export default class WebGLRenderer {
     this.currentFrame = 0
     this.lastTime = 0
     this.frameRate = 0
+  }
+
+  private syncPassTextures(): void {
+    this.textureMap.clear()
+
+    this.pipeline.forEach((pass) => {
+      const passName = pass.shader.passName
+
+      if (pass.texture) {
+        this.textureMap.set(passName, pass.texture)
+      }
+
+      const passConfig = this.passConfigs.get(passName)
+      if (!passConfig) {
+        return
+      }
+
+      pass.textures = passConfig.textures.map((textureName) => {
+        const texture = this.textureMap.get(textureName)
+        if (!texture) {
+          console.warn(`Texture ${textureName} not found for pass ${passName}`)
+        }
+        return texture as WebGLTexture
+      })
+        .filter(Boolean)
+    })
   }
 }

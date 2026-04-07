@@ -1,5 +1,6 @@
 export { WebGLRenderer } from './engine'
 export { FBO } from './fbo'
 export { Pass } from './pass'
+export { Pipeline } from './pipeline'
 export { Shader } from './shader'
 export type { PassConfig, RendererConfig } from './types'
