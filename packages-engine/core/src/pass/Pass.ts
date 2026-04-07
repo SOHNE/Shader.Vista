@@ -1,6 +1,7 @@
-import type { BufferInfo, FramebufferInfo } from 'twgl.js'
+import type { BufferInfo } from 'twgl.js'
 import type Shader from '../shader/Shader'
-import { bindFramebufferInfo, createFramebufferInfo, drawBufferInfo, resizeFramebufferInfo, setBuffersAndAttributes, setUniforms } from 'twgl.js'
+import { bindFramebufferInfo, drawBufferInfo, setBuffersAndAttributes, setUniforms } from 'twgl.js'
+import FBO from '../fbo/FBO'
 
 /**
  * Represents a render pass in the WebGL pipeline.
@@ -10,7 +11,7 @@ export default class Pass {
   shader: Shader
   width: number
   height: number
-  fbi: FramebufferInfo | null
+  fbo: FBO | null
   next: Pass | null
   offscreen: boolean
   textures: WebGLTexture[]
@@ -35,24 +36,22 @@ export default class Pass {
     this.next = null
 
     if (this.offscreen) {
-      this.fbi = createFramebufferInfo(gl, [
-        { format: gl.RGBA, type: gl.UNSIGNED_BYTE, min: gl.NEAREST, mag: gl.NEAREST, wrap: gl.CLAMP_TO_EDGE },
-      ], width, height)
+      this.fbo = new FBO(gl, width, height)
     }
     else {
-      this.fbi = null
+      this.fbo = null
     }
   }
 
   get texture(): WebGLTexture | undefined {
-    return this.fbi?.attachments[0]
+    return this.fbo?.texture
   }
 
   use() {
     this.shader.use()
 
-    if (this.offscreen && this.fbi) {
-      bindFramebufferInfo(this.gl, this.fbi)
+    if (this.offscreen && this.fbo) {
+      this.fbo.bind()
     }
     else {
       bindFramebufferInfo(this.gl, null)
@@ -63,10 +62,8 @@ export default class Pass {
   resize(width: number, height: number) {
     this.width = width
     this.height = height
-    if (this.offscreen && this.fbi) {
-      resizeFramebufferInfo(this.gl, this.fbi, [
-        { format: this.gl.RGBA, type: this.gl.UNSIGNED_BYTE, min: this.gl.NEAREST, mag: this.gl.NEAREST, wrap: this.gl.CLAMP_TO_EDGE },
-      ], width, height)
+    if (this.offscreen && this.fbo) {
+      this.fbo.resize(width, height)
     }
   }
 
