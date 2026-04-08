@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { PassConfig } from '@actis/core'
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
 import { Pane, Splitpanes } from 'splitpanes'
 import { computed, ref, watch } from 'vue'
@@ -77,7 +78,7 @@ if (sharedCode) {
         .replace(/'/g, '"')
       const parsedPasses = JSON.parse(jsonStr)
       if (Array.isArray(parsedPasses)) {
-        passes.value = parsedPasses
+        passes.value = parsedPasses.map(pass => normalizePassConfig(pass as PassConfig))
       }
     }
   }
@@ -89,6 +90,41 @@ if (sharedCode) {
 const breakpoints = useBreakpoints(breakpointsTailwind)
 const isMobile = breakpoints.smaller('md')
 const horizontal = computed(() => isMobile.value)
+
+function trimEmptyTextureSlots(textures: string[]) {
+  let lastIndex = textures.length - 1
+  while (lastIndex >= 0 && !textures[lastIndex]) {
+    lastIndex--
+  }
+
+  return textures.slice(0, lastIndex + 1)
+}
+
+function normalizePassConfig(pass: PassConfig): PassConfig {
+  const nextTextures = trimEmptyTextureSlots(pass.textures ?? [])
+  const {
+    offscreen: _ignoredOffscreen,
+    pingPong: _ignoredPingPong,
+    ...nextPass
+  } = pass as PassConfig & { offscreen?: boolean }
+
+  return {
+    ...nextPass,
+    textures: nextTextures,
+  }
+}
+
+function updatePassTextures(index: number, textures: string[]) {
+  const pass = passes.value[index]
+  if (!pass) {
+    return
+  }
+
+  passes.value[index] = normalizePassConfig({
+    ...pass,
+    textures,
+  })
+}
 </script>
 
 <template>
@@ -107,7 +143,7 @@ const horizontal = computed(() => isMobile.value)
               <PassEditor
                 v-if="passes[activePassIndex]" :active-pass="passes[activePassIndex]" :passes="passes"
                 @update:fragment-shader="passes[activePassIndex].fragmentShader = $event"
-                @update:textures="passes[activePassIndex].textures = $event"
+                @update:textures="updatePassTextures(activePassIndex, $event)"
               />
             </div>
           </div>

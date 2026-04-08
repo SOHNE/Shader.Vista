@@ -31,9 +31,7 @@ watch(() => props.activePass.name, () => {
   selectingIndex.value = null
 })
 
-const otherPasses = computed(() =>
-  props.passes.filter(p => p.name !== props.activePass.name),
-)
+const availablePasses = computed(() => props.passes)
 
 const textureCount = computed(() =>
   props.activePass.textures.filter(Boolean).length,
@@ -103,7 +101,8 @@ function handleAssign(passName: string | null) {
           v-if="selectingIndex !== null"
           :selecting-index="selectingIndex"
           :active-pass-textures="activePass.textures"
-          :other-passes="otherPasses"
+          :active-pass-name="activePass.name"
+          :available-passes="availablePasses"
           @assign="handleAssign"
           @close="selectingIndex = null"
         />

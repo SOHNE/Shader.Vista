@@ -4,7 +4,8 @@ import type { PassConfig } from '@actis/core'
 type Props = {
   selectingIndex: number
   activePassTextures: string[]
-  otherPasses: PassConfig[]
+  activePassName: string
+  availablePasses: PassConfig[]
 }
 
 type Emits = {
@@ -33,7 +34,7 @@ const emit = defineEmits<Emits>()
     </div>
 
     <div
-      v-if="otherPasses.length === 0"
+      v-if="availablePasses.length === 0"
       class="text-dim py-6 text-center border border-border rounded border-dashed bg-canvas flex-center flex-col"
     >
       <div class="i-carbon-warning-alt text-xl mb-2" />
@@ -41,20 +42,20 @@ const emit = defineEmits<Emits>()
     </div>
     <div v-else class="mt-1 gap-2 grid grid-cols-2">
       <button
-        v-for="otherPass in otherPasses"
-        :key="otherPass.name"
+        v-for="availablePass in availablePasses"
+        :key="availablePass.name"
         class="group px-3 py-2.5 text-left border rounded flex gap-2.5 transition-all items-center"
         :class="
-          activePassTextures[selectingIndex] === otherPass.name
+          activePassTextures[selectingIndex] === availablePass.name
             ? 'border-accent accent-subtle'
             : 'border-border bg-canvas hover:border-accent hover:shadow-sm'
         "
-        @click="emit('assign', otherPass.name)"
+        @click="emit('assign', availablePass.name)"
       >
         <div
           class="i-carbon-layers text-sm"
           :class="
-            activePassTextures[selectingIndex] === otherPass.name
+            activePassTextures[selectingIndex] === availablePass.name
               ? 'text-accent'
               : 'text-gray-400 group-hover:text-accent'
           "
@@ -63,12 +64,18 @@ const emit = defineEmits<Emits>()
           <span
             class="text-xs font-semibold truncate"
             :class="
-              activePassTextures[selectingIndex] === otherPass.name
+              activePassTextures[selectingIndex] === availablePass.name
                 ? 'text-accent'
                 : 'text-gray-700 dark:text-gray-300 group-hover:text-main'
             "
           >
-            {{ otherPass.name }}
+            {{ availablePass.name }}
+          </span>
+          <span
+            v-if="availablePass.name === activePassName"
+            class="text-[11px] text-dim leading-tight"
+          >
+            Previous frame
           </span>
         </div>
       </button>
