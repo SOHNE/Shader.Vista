@@ -19,10 +19,24 @@ export default class Pipeline {
   ) { }
 
   add(name: string, pass: Pass, dependencies: string[] = []): void {
+    const sanitizedDependencies = dependencies.filter((dependency) => {
+      if (dependency !== name) {
+        return true
+      }
+
+      if (pass.pingPong) {
+        return false
+      }
+
+      throw new Error(
+        `Pass "${name}" samples itself and requires pingPong to read the previous frame`,
+      )
+    })
+
     this.registry.add({
       name,
       pass,
-      dependencies,
+      dependencies: sanitizedDependencies,
     })
     this.dirty = true
   }

@@ -19,7 +19,7 @@ export default class FBO {
   }
 
   private create(width: number, height: number): FramebufferInfo {
-    return createFramebufferInfo(this.gl, [
+    const framebufferInfo = createFramebufferInfo(this.gl, [
       {
         format: this.gl.RGBA,
         type: this.gl.UNSIGNED_BYTE,
@@ -28,6 +28,10 @@ export default class FBO {
         wrap: this.gl.CLAMP_TO_EDGE,
       },
     ], width, height)
+
+    this.clear(framebufferInfo)
+
+    return framebufferInfo
   }
 
   get info(): FramebufferInfo {
@@ -54,5 +58,14 @@ export default class FBO {
         wrap: this.gl.CLAMP_TO_EDGE,
       },
     ], width, height)
+
+    this.clear()
+  }
+
+  private clear(framebufferInfo: FramebufferInfo = this.framebufferInfo): void {
+    bindFramebufferInfo(this.gl, framebufferInfo)
+    this.gl.clearColor(0, 0, 0, 0)
+    this.gl.clear(this.gl.COLOR_BUFFER_BIT)
+    bindFramebufferInfo(this.gl, null)
   }
 }
