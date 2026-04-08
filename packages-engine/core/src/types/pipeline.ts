@@ -1,9 +1,21 @@
 import type Pass from '../pass/Pass'
+import type { PassConfig, RendererConfig } from './renderer'
 
 export type PipelineEntry = {
   dependencies: string[]
   name: string
   pass: Pass
+}
+
+export type ResolvedPassConfig = Omit<PassConfig, 'pingPong'> & {
+  dependencies: string[]
+  offscreen: boolean
+  pingPong: boolean
+  presentToCanvas: boolean
+}
+
+export type PipelinePlan = {
+  passes: ResolvedPassConfig[]
 }
 
 export type PipelineRegistry = {
@@ -16,4 +28,8 @@ export type PipelineRegistry = {
 
 export type PipelineSorter = {
   sort: (registry: PipelineRegistry) => Pass[]
+}
+
+export type PipelineConfigCompiler = {
+  compile: (config: RendererConfig) => PipelinePlan
 }

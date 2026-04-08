@@ -2,7 +2,7 @@ export type PassConfig = {
   name: string
   fragmentShader: string
   vertexShader?: string
-  offscreen?: boolean
+  pingPong?: boolean
   textures: string[]
 }
 
