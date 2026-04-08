@@ -1,6 +1,9 @@
-import type { PassConfig, RendererConfig } from '../types'
+import type { BufferInfo } from 'twgl.js'
+import type { PipelinePlan, RendererConfig, ResolvedPassConfig } from '../types'
+import { bindFramebufferInfo, drawBufferInfo, setBuffersAndAttributes, setUniforms } from 'twgl.js'
 import Pass from '../pass/Pass'
 import Pipeline from '../pipeline/Pipeline'
+import PipelineCompiler from '../pipeline/PipelineCompiler'
 import Shader from '../shader/Shader'
 import { getScreenTriangle } from './ScreenTriangle'
 
@@ -8,14 +11,28 @@ import { getScreenTriangle } from './ScreenTriangle'
  * Renderer class responsible for managing the WebGL context, render passes, and animation loop.
  */
 export default class WebGLRenderer {
+  private static readonly presentFragmentShader = `
+    precision highp float;
+    uniform sampler2D u_texture0;
+    uniform vec2 u_resolution;
+
+    void main() {
+      vec2 uv = gl_FragCoord.xy / u_resolution;
+      gl_FragColor = texture2D(u_texture0, uv);
+    }
+  `
+
   private gl: WebGLRenderingContext
   private pipeline: Pipeline
   private canvas: HTMLCanvasElement
   private animationRequestID: number
-  private passConfigs: Map<string, PassConfig>
+  private passConfigs: Map<string, ResolvedPassConfig>
   private textureMap: Map<string, WebGLTexture>
   private now: Date
   private onError: (details: { passName: string, coords: { line: number, message: string } }) => void
+  private readonly compiler: PipelineCompiler
+  private readonly presentShader: Shader
+  private readonly screenTriangle: BufferInfo
 
   public mouseX: number
   public mouseY: number
@@ -41,9 +58,18 @@ export default class WebGLRenderer {
     this.passConfigs = new Map()
     this.textureMap = new Map()
     this.now = new Date()
+    this.compiler = new PipelineCompiler()
+    this.screenTriangle = getScreenTriangle(this.gl)
     this.onError = onError || (({ passName, coords }) => {
       console.error(`[Actis] Error in pass "${passName}" at line ${coords.line}: ${coords.message}`)
     })
+    this.presentShader = new Shader(
+      this.gl,
+      undefined,
+      WebGLRenderer.presentFragmentShader,
+      () => { },
+      '__actis_present__',
+    )
 
     this.mouseX = 0
     this.mouseY = 0
@@ -192,12 +218,24 @@ export default class WebGLRenderer {
   public render(currentTime: number): void {
     this.updateTime(currentTime)
     this.resizeCanvasToDisplaySize()
+    let presentedTexture: WebGLTexture | undefined
 
     this.pipeline.forEach((pass) => {
+      this.syncPassTexturesForPass(pass)
       pass.use()
       this.updateUniforms(pass)
       pass.draw()
+      this.updateTextureMapForPass(pass)
+
+      const passConfig = this.passConfigs.get(pass.shader.passName)
+      if (passConfig?.presentToCanvas) {
+        presentedTexture = pass.texture
+      }
     })
+
+    if (presentedTexture) {
+      this.presentTexture(presentedTexture)
+    }
 
     // FIXME: Placed here just to maintain a render loop. Must be redone later.
     if (typeof requestAnimationFrame !== 'undefined') {
@@ -218,9 +256,17 @@ export default class WebGLRenderer {
 
     const displayWidth = Math.floor(this.canvas.clientWidth * this.realToCSSPixels)
     const displayHeight = Math.floor(this.canvas.clientHeight * this.realToCSSPixels)
-    const geometry = getScreenTriangle(this.gl)
+    let pipelinePlan: PipelinePlan
 
-    config.passes.forEach((passConfig: PassConfig) => {
+    try {
+      pipelinePlan = this.compiler.compile(config)
+    }
+    catch (error: unknown) {
+      console.error(`[Actis] Failed to compile pipeline: ${(error as Error).message}`)
+      return
+    }
+
+    pipelinePlan.passes.forEach((passConfig) => {
       this.passConfigs.set(passConfig.name, passConfig)
 
       try {
@@ -231,17 +277,23 @@ export default class WebGLRenderer {
           this.onError,
           passConfig.name,
         )
-        const offscreen = passConfig.offscreen || passConfig.name !== 'MainBuffer'
+
         const pass = new Pass(
           this.gl,
           shader,
-          geometry,
+          this.screenTriangle,
           displayWidth,
           displayHeight,
-          offscreen,
+          passConfig.offscreen,
           [],
+          passConfig.pingPong,
         )
-        this.pipeline.add(passConfig.name, pass, passConfig.textures)
+
+        this.pipeline.add(
+          passConfig.name,
+          pass,
+          passConfig.dependencies,
+        )
 
         // Map this pass's texture to its name
         if (pass.texture) {
@@ -277,25 +329,52 @@ export default class WebGLRenderer {
     this.textureMap.clear()
 
     this.pipeline.forEach((pass) => {
-      const passName = pass.shader.passName
-
-      if (pass.texture) {
-        this.textureMap.set(passName, pass.texture)
-      }
-
-      const passConfig = this.passConfigs.get(passName)
-      if (!passConfig) {
-        return
-      }
-
-      pass.textures = passConfig.textures.map((textureName) => {
-        const texture = this.textureMap.get(textureName)
-        if (!texture) {
-          console.warn(`Texture ${textureName} not found for pass ${passName}`)
-        }
-        return texture as WebGLTexture
-      })
-        .filter(Boolean)
+      this.updateTextureMapForPass(pass)
     })
+
+    this.pipeline.forEach((pass) => {
+      this.syncPassTexturesForPass(pass)
+    })
+  }
+
+  private syncPassTexturesForPass(pass: Pass): void {
+    const passName = pass.shader.passName
+    const passConfig = this.passConfigs.get(passName)
+    if (!passConfig) {
+      return
+    }
+
+    pass.textures = passConfig.textures.reduce<WebGLTexture[]>((textures, textureName) => {
+      const texture = this.textureMap.get(textureName)
+      if (!texture) {
+        console.warn(`Texture ${textureName} not found for pass ${passName}`)
+        return textures
+      }
+
+      textures.push(texture)
+      return textures
+    }, [])
+  }
+
+  private updateTextureMapForPass(pass: Pass): void {
+    const texture = pass.texture
+    if (!texture) {
+      return
+    }
+
+    this.textureMap.set(pass.shader.passName, texture)
+  }
+
+  private presentTexture(texture: WebGLTexture): void {
+    bindFramebufferInfo(this.gl, null)
+    this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height)
+
+    this.presentShader.use()
+    setBuffersAndAttributes(this.gl, this.presentShader.programInfo, this.screenTriangle)
+    setUniforms(this.presentShader.programInfo, {
+      u_texture0: texture,
+      u_resolution: [this.gl.canvas.width, this.gl.canvas.height],
+    })
+    drawBufferInfo(this.gl, this.screenTriangle)
   }
 }
