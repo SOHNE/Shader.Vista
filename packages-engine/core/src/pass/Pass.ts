@@ -11,10 +11,12 @@ export default class Pass {
   shader: Shader
   width: number
   height: number
-  fbo: FBO | null
   offscreen: boolean
+  pingPong: boolean
   textures: WebGLTexture[]
   bufferInfo: BufferInfo
+  private fbos: FBO[]
+  private readBufferIndex: number
 
   constructor(
     gl: WebGLRenderingContext,
@@ -24,6 +26,7 @@ export default class Pass {
     height: number,
     offscreen = true,
     textures: WebGLTexture[] = [],
+    pingPong = false,
   ) {
     this.gl = gl
     this.shader = shader
@@ -31,25 +34,32 @@ export default class Pass {
     this.width = width
     this.height = height
     this.offscreen = offscreen
+    this.pingPong = offscreen && pingPong
     this.textures = textures
+    this.fbos = []
+    this.readBufferIndex = 0
 
     if (this.offscreen) {
-      this.fbo = new FBO(gl, width, height)
-    }
-    else {
-      this.fbo = null
+      const framebufferCount = this.pingPong ? 2 : 1
+      for (let index = 0; index < framebufferCount; index++) {
+        this.fbos.push(new FBO(gl, width, height))
+      }
     }
   }
 
+  get fbo(): FBO | null {
+    return this.readFBO
+  }
+
   get texture(): WebGLTexture | undefined {
-    return this.fbo?.texture
+    return this.readFBO?.texture
   }
 
   use() {
     this.shader.use()
 
-    if (this.offscreen && this.fbo) {
-      this.fbo.bind()
+    if (this.offscreen && this.writeFBO) {
+      this.writeFBO.bind()
     }
     else {
       bindFramebufferInfo(this.gl, null)
@@ -60,8 +70,8 @@ export default class Pass {
   resize(width: number, height: number) {
     this.width = width
     this.height = height
-    if (this.offscreen && this.fbo) {
-      this.fbo.resize(width, height)
+    if (this.offscreen) {
+      this.fbos.forEach(fbo => fbo.resize(width, height))
     }
   }
 
@@ -75,5 +85,29 @@ export default class Pass {
 
     setUniforms(this.shader.programInfo, uniforms)
     drawBufferInfo(this.gl, this.bufferInfo)
+
+    if (this.pingPong) {
+      this.swap()
+    }
+  }
+
+  private get readFBO(): FBO | null {
+    return this.fbos[this.readBufferIndex] ?? null
+  }
+
+  private get writeFBO(): FBO | null {
+    if (!this.offscreen) {
+      return null
+    }
+
+    if (!this.pingPong) {
+      return this.readFBO
+    }
+
+    return this.fbos[(this.readBufferIndex + 1) % this.fbos.length] ?? null
+  }
+
+  private swap(): void {
+    this.readBufferIndex = (this.readBufferIndex + 1) % this.fbos.length
   }
 }
