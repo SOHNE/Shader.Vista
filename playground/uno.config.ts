@@ -18,6 +18,12 @@ export default defineConfig({
     'p-item': 'px-3 py-1',
     'p-btn': 'px-3 py-1.5',
     'p-btn-sm': 'px-1.5 py-0.5',
+
+    // Control panel shortcuts
+    'ctrl-panel': 'p-1.5 rounded-xl bg-black/40 backdrop-blur-sm',
+    'ctrl-btn': 'text-white/50 p-1.5 rounded-lg cursor-pointer touch-none transition-colors hover:text-white hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-white/50',
+    'ctrl-divider': 'w-5 h-px bg-white/10',
+    'info-value': 'text-xs text-white/80 font-medium tabular-nums whitespace-nowrap font-mono',
   },
   theme: {
     colors: {
