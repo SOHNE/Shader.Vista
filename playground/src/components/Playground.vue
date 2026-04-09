@@ -56,30 +56,25 @@ void main() {
 
 const { passes, activePassIndex, addPass, removePass, pipelineCode } = usePasses(DEFAULT_PIPELINE)
 
-// code is used for Preview.vue and Header.vue (sharing)
+// code is used for Preview.vue
 const code = ref('')
 watch(pipelineCode, (newJs) => {
   code.value = newJs
 }, { immediate: true })
 
-const { getCodeFromUrl } = useSharing(code)
+// shareData is used for Header.vue (sharing)
+// We only share the raw configuration data for better robustness
+const shareData = computed(() => JSON.stringify(passes.value))
+
+const { getDataFromUrl } = useSharing()
 
 // Check for shared code on mount
-const sharedCode = getCodeFromUrl()
-if (sharedCode) {
+const sharedContent = getDataFromUrl()
+if (sharedContent) {
   try {
-    const passesMatch = sharedCode.match(/passes:\s*(\[[\s\S]+\])\s*,\s*textures\s*:/)
-    if (passesMatch) {
-      // In a real app we might need a more robust parser if it's not strictly JSON,
-      // but for this prototype we'll try to keep it safe.
-      // We'll replace property names without quotes to make it valid JSON if needed
-      const jsonStr = passesMatch[1]
-        .replace(/(\w+):/g, '"$1":')
-        .replace(/'/g, '"')
-      const parsedPasses = JSON.parse(jsonStr)
-      if (Array.isArray(parsedPasses)) {
-        passes.value = parsedPasses.map(pass => normalizePassConfig(pass as PassConfig))
-      }
+    const parsed = JSON.parse(sharedContent)
+    if (Array.isArray(parsed)) {
+      passes.value = parsed.map(pass => normalizePassConfig(pass as PassConfig))
     }
   }
   catch (e) {
@@ -104,7 +99,6 @@ function normalizePassConfig(pass: PassConfig): PassConfig {
   const nextTextures = trimEmptyTextureSlots(pass.textures ?? [])
   const {
     offscreen: _ignoredOffscreen,
-    pingPong: _ignoredPingPong,
     ...nextPass
   } = pass as PassConfig & { offscreen?: boolean }
 
@@ -135,7 +129,7 @@ function updatePassTextures(index: number, textures: string[]) {
           <Preview :code="code" />
         </Pane>
         <Pane :size="horizontal ? 60 : 50" class="flex flex-col min-h-0 min-w-0">
-          <Header :code="code" />
+          <Header :code="shareData" />
           <div class="flex flex-1 flex-col min-h-0">
             <TabBar v-model:active-index="activePassIndex" :passes="passes" @add="addPass" @remove="removePass" />
 

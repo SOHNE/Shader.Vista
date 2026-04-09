@@ -5,11 +5,7 @@ const props = defineProps<{
   code: string
 }>()
 
-const { share, copied } = useSharing({
-  get value() {
-    return props.code
-  },
-})
+const { share, copied } = useSharing()
 </script>
 
 <template>
@@ -17,7 +13,7 @@ const { share, copied } = useSharing({
     class="icon-btn flex items-center"
     :class="copied ? 'success' : ''"
     :title="copied ? 'URL Copied!' : 'Share Code'"
-    @click="share"
+    @click="share(props.code)"
   >
     <div :class="copied ? 'i-carbon-checkmark' : 'i-carbon-share'" class="text-base" />
   </button>
