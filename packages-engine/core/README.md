@@ -32,7 +32,7 @@ yarn add @actis/core
 Here's a simple example to get you started:
 
 ```tsx
-import WebGLRenderer from '@actis/core'
+import { WebGLRenderer } from '@actis/core'
 import React, { useEffect, useRef } from 'react'
 
 // Main React functional component
@@ -100,7 +100,6 @@ function App() {
           textures: ['bufferB'],
         },
       ],
-      textures: [],
     }
     rendererRef.current.setup(passes) // Setup the renderer with the passes
     requestAnimationFrame(rendererRef.current.render) // Start the rendering loop
