@@ -1,3 +1,5 @@
+export * from './gl'
 export * from './pipeline'
 export * from './renderer'
 export * from './shader'
+export * from './texture'

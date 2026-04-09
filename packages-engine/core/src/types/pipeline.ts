@@ -7,11 +7,12 @@ export type PipelineEntry = {
   pass: Pass
 }
 
-export type ResolvedPassConfig = Omit<PassConfig, 'pingPong'> & {
+export type ResolvedPassConfig = Omit<PassConfig, 'pingPong' | 'textures'> & {
   dependencies: string[]
   offscreen: boolean
   pingPong: boolean
   presentToCanvas: boolean
+  textures: string[]
 }
 
 export type PipelinePlan = {

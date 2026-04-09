@@ -1,5 +1,6 @@
 import type { BufferInfo } from 'twgl.js'
-import type { PipelinePlan, RendererConfig, ResolvedPassConfig } from '../types'
+import type Texture from '../texture/Texture'
+import type { GL, PipelinePlan, RendererConfig, RendererMetrics, ResolvedPassConfig } from '../types'
 import { bindFramebufferInfo, drawBufferInfo, setBuffersAndAttributes, setUniforms } from 'twgl.js'
 import Pass from '../pass/Pass'
 import Pipeline from '../pipeline/Pipeline'
@@ -22,12 +23,12 @@ export default class WebGLRenderer {
     }
   `
 
-  private gl: WebGLRenderingContext
+  private gl: GL
   private pipeline: Pipeline
   private canvas: HTMLCanvasElement
   private animationRequestID: number
   private passConfigs: Map<string, ResolvedPassConfig>
-  private textureMap: Map<string, WebGLTexture>
+  private textureMap: Map<string, Texture>
   private now: Date
   private onError: (details: { passName: string, coords: { line: number, message: string } }) => void
   private readonly compiler: PipelineCompiler
@@ -46,6 +47,7 @@ export default class WebGLRenderer {
   public currentFrame: number
   public currentTime: number
   public startTime: number
+  private pausedAt: number
 
   constructor(
     canvas: HTMLCanvasElement,
@@ -83,6 +85,7 @@ export default class WebGLRenderer {
     this.currentFrame = 0
     this.currentTime = 0
     this.startTime = 0
+    this.pausedAt = 0
 
     this.initMouseEvents()
     if (typeof window !== 'undefined') {
@@ -90,7 +93,7 @@ export default class WebGLRenderer {
     }
   }
 
-  private initializeWebGLContext(canvas: HTMLCanvasElement): WebGLRenderingContext {
+  private initializeWebGLContext(canvas: HTMLCanvasElement): GL {
     const opts = {
       alpha: false,
       depth: false,
@@ -111,7 +114,7 @@ export default class WebGLRenderer {
       throw new Error('WebGL not supported')
     }
 
-    return gl as WebGLRenderingContext
+    return gl as GL
   }
 
   private initMouseEvents(): void {
@@ -160,6 +163,27 @@ export default class WebGLRenderer {
     this.pipeline.forEach(callback)
   }
 
+  public getMetrics(): RendererMetrics {
+    return {
+      paused: this.paused,
+      time: this.currentTime,
+      frameRate: this.frameRate,
+      width: this.canvas.width,
+      height: this.canvas.height,
+    }
+  }
+
+  public clear(): void {
+    this.resetPlaybackState()
+    this.pipeline.forEach(pass => pass.clear())
+    this.syncPassTextures()
+    this.clearCanvas()
+
+    if (this.getPasses().length > 0) {
+      this.renderFrame()
+    }
+  }
+
   private resizeCanvasToDisplaySize(): void {
     const displayWidth = Math.floor(this.canvas.clientWidth * this.realToCSSPixels)
     const displayHeight = Math.floor(this.canvas.clientHeight * this.realToCSSPixels)
@@ -195,64 +219,63 @@ export default class WebGLRenderer {
   }
 
   private updateTime(currentTime?: number): void {
+    this.now = new Date()
+
     if (this.paused) {
       this.timeDelta = 0
+      this.frameRate = 0
       return
     }
 
     const t = currentTime ?? (typeof performance !== 'undefined' ? performance.now() : Date.now())
+    const hasStarted = this.startTime !== 0
     if (this.startTime === 0)
       this.startTime = t
 
-    if (this.lastTime === 0) {
+    if (this.pausedAt !== 0) {
+      if (hasStarted) {
+        this.startTime += t - this.pausedAt
+      }
+      this.pausedAt = 0
+      this.lastTime = t
+      this.timeDelta = 0
+    }
+    else if (this.lastTime === 0) {
+      this.lastTime = t
+      this.timeDelta = 0
+    }
+    else {
+      this.timeDelta = (t - this.lastTime) / 1000.0
       this.lastTime = t
     }
 
-    this.timeDelta = (t - this.startTime) / 1000.0
-    this.currentTime += this.timeDelta
-    this.frameRate = 1.0 / this.timeDelta
+    this.currentTime = (t - this.startTime) / 1000.0
+    this.time = this.currentTime
+    this.playbackTime = this.currentTime
+    this.frameRate = this.timeDelta > 0 ? 1.0 / this.timeDelta : 0
     this.currentFrame++
-    this.startTime = t
   }
 
   public render(currentTime: number): void {
-    this.updateTime(currentTime)
-    this.resizeCanvasToDisplaySize()
-    let presentedTexture: WebGLTexture | undefined
-
-    this.pipeline.forEach((pass) => {
-      this.syncPassTexturesForPass(pass)
-      pass.use()
-      this.updateUniforms(pass)
-      pass.draw()
-      this.updateTextureMapForPass(pass)
-
-      const passConfig = this.passConfigs.get(pass.shader.passName)
-      if (passConfig?.presentToCanvas) {
-        presentedTexture = pass.texture
-      }
-    })
-
-    if (presentedTexture) {
-      this.presentTexture(presentedTexture)
-    }
+    this.renderFrame(currentTime)
 
     // FIXME: Placed here just to maintain a render loop. Must be redone later.
-    if (typeof requestAnimationFrame !== 'undefined') {
+    if (!this.paused && typeof requestAnimationFrame !== 'undefined') {
       this.animationRequestID = requestAnimationFrame(this.render.bind(this))
+    }
+    else {
+      this.animationRequestID = -1
     }
   }
 
   public setup(config: RendererConfig): void {
     // Clear previous state
-    if (this.animationRequestID !== -1) {
-      cancelAnimationFrame(this.animationRequestID)
-      this.animationRequestID = -1
-    }
+    this.cancelAnimationLoop()
     this.pipeline.clear()
     this.passConfigs.clear()
     this.textureMap.clear()
-    this.reset()
+    this.resetPlaybackState()
+    this.clearCanvas()
 
     const displayWidth = Math.floor(this.canvas.clientWidth * this.realToCSSPixels)
     const displayHeight = Math.floor(this.canvas.clientHeight * this.realToCSSPixels)
@@ -287,6 +310,7 @@ export default class WebGLRenderer {
           passConfig.offscreen,
           [],
           passConfig.pingPong,
+          passConfig.texture,
         )
 
         this.pipeline.add(
@@ -309,20 +333,54 @@ export default class WebGLRenderer {
   }
 
   public play(): void {
+    if (this.animationRequestID !== -1 || typeof requestAnimationFrame === 'undefined') {
+      this.paused = false
+      return
+    }
+
     this.paused = false
     this.animationRequestID = requestAnimationFrame(this.render.bind(this))
   }
 
+  public resume(): void {
+    this.play()
+  }
+
   public pause(): void {
+    if (this.paused) {
+      return
+    }
+
     this.paused = true
-    cancelAnimationFrame(this.animationRequestID)
+    this.pausedAt = typeof performance !== 'undefined' ? performance.now() : Date.now()
+    this.cancelAnimationLoop()
   }
 
   public reset(): void {
-    this.playbackTime = 0
-    this.currentFrame = 0
-    this.lastTime = 0
-    this.frameRate = 0
+    this.clear()
+  }
+
+  private renderFrame(currentTime?: number): void {
+    this.updateTime(currentTime)
+    this.resizeCanvasToDisplaySize()
+    let presentedTexture: Texture | undefined
+
+    this.pipeline.forEach((pass) => {
+      this.syncPassTexturesForPass(pass)
+      pass.use()
+      this.updateUniforms(pass)
+      pass.draw()
+      this.updateTextureMapForPass(pass)
+
+      const passConfig = this.passConfigs.get(pass.shader.passName)
+      if (passConfig?.presentToCanvas) {
+        presentedTexture = pass.texture
+      }
+    })
+
+    if (presentedTexture) {
+      this.presentTexture(presentedTexture)
+    }
   }
 
   private syncPassTextures(): void {
@@ -344,7 +402,7 @@ export default class WebGLRenderer {
       return
     }
 
-    pass.textures = passConfig.textures.reduce<WebGLTexture[]>((textures, textureName) => {
+    pass.textures = passConfig.textures.reduce<Texture[]>((textures, textureName) => {
       const texture = this.textureMap.get(textureName)
       if (!texture) {
         console.warn(`Texture ${textureName} not found for pass ${passName}`)
@@ -365,16 +423,50 @@ export default class WebGLRenderer {
     this.textureMap.set(pass.shader.passName, texture)
   }
 
-  private presentTexture(texture: WebGLTexture): void {
+  private presentTexture(texture: Texture): void {
+    if (!texture.handle) {
+      return
+    }
+
     bindFramebufferInfo(this.gl, null)
     this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height)
 
     this.presentShader.use()
     setBuffersAndAttributes(this.gl, this.presentShader.programInfo, this.screenTriangle)
     setUniforms(this.presentShader.programInfo, {
-      u_texture0: texture,
+      u_texture0: texture.handle,
       u_resolution: [this.gl.canvas.width, this.gl.canvas.height],
     })
     drawBufferInfo(this.gl, this.screenTriangle)
+  }
+
+  private cancelAnimationLoop(): void {
+    if (this.animationRequestID === -1 || typeof cancelAnimationFrame === 'undefined') {
+      this.animationRequestID = -1
+      return
+    }
+
+    cancelAnimationFrame(this.animationRequestID)
+    this.animationRequestID = -1
+  }
+
+  private clearCanvas(): void {
+    bindFramebufferInfo(this.gl, null)
+    this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height)
+    this.gl.clearColor(0, 0, 0, 0)
+    this.gl.clear(this.gl.COLOR_BUFFER_BIT)
+  }
+
+  private resetPlaybackState(): void {
+    this.now = new Date()
+    this.time = 0
+    this.timeDelta = 0
+    this.playbackTime = 0
+    this.lastTime = 0
+    this.frameRate = 0
+    this.currentFrame = 0
+    this.currentTime = 0
+    this.startTime = 0
+    this.pausedAt = 0
   }
 }

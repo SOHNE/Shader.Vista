@@ -1,5 +1,6 @@
 import type { ProgramInfo } from 'twgl.js'
 import type { ShaderError } from '../types'
+import type { GL } from '../types/gl'
 import { createProgramInfo, setUniforms } from 'twgl.js'
 
 const ERROR_LOG_REGEX = /ERROR: 0:(\d+): (.*)(?=\n|$)/
@@ -9,13 +10,13 @@ const ERROR_LOG_REGEX = /ERROR: 0:(\d+): (.*)(?=\n|$)/
  * Responsible for compiling, linking, and providing access to uniforms and attributes.
  */
 export default class Shader {
-  private gl: WebGLRenderingContext
+  private gl: GL
   public programInfo: ProgramInfo
   private onError: (details: ShaderError) => void
   public readonly passName: string
 
   constructor(
-    gl: WebGLRenderingContext,
+    gl: GL,
     vertexSource: string | undefined,
     fragmentSource: string,
     onError: (details: ShaderError) => void,

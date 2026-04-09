@@ -1,32 +1,36 @@
 import type { BufferInfo } from 'twgl.js'
 import type Shader from '../shader/Shader'
+import type { GL } from '../types/gl'
+import type { TextureOptions } from '../types/texture'
 import { bindFramebufferInfo, drawBufferInfo, setBuffersAndAttributes, setUniforms } from 'twgl.js'
 import FBO from '../fbo/FBO'
+import Texture from '../texture/Texture'
 
 /**
  * Represents a render pass in the WebGL pipeline.
  */
 export default class Pass {
-  gl: WebGLRenderingContext
+  gl: GL
   shader: Shader
   width: number
   height: number
   offscreen: boolean
   pingPong: boolean
-  textures: WebGLTexture[]
+  textures: Texture[]
   bufferInfo: BufferInfo
   private fbos: FBO[]
   private readBufferIndex: number
 
   constructor(
-    gl: WebGLRenderingContext,
+    gl: GL,
     shader: Shader,
     geometry: BufferInfo,
     width: number,
     height: number,
     offscreen = true,
-    textures: WebGLTexture[] = [],
+    textures: Texture[] = [],
     pingPong = false,
+    textureOptions: TextureOptions = {},
   ) {
     this.gl = gl
     this.shader = shader
@@ -42,7 +46,12 @@ export default class Pass {
     if (this.offscreen) {
       const framebufferCount = this.pingPong ? 2 : 1
       for (let index = 0; index < framebufferCount; index++) {
-        this.fbos.push(new FBO(gl, width, height))
+        this.fbos.push(new FBO(
+          gl,
+          width,
+          height,
+          new Texture(shader.passName, textureOptions),
+        ))
       }
     }
   }
@@ -51,7 +60,7 @@ export default class Pass {
     return this.readFBO
   }
 
-  get texture(): WebGLTexture | undefined {
+  get texture(): Texture | undefined {
     return this.readFBO?.texture
   }
 
@@ -80,7 +89,10 @@ export default class Pass {
 
     const uniforms: { [key: string]: any } = {}
     this.textures.forEach((texture, index) => {
-      uniforms[`u_texture${index}`] = texture
+      const { handle } = texture
+      if (handle) {
+        uniforms[`u_texture${index}`] = handle
+      }
     })
 
     setUniforms(this.shader.programInfo, uniforms)
@@ -89,6 +101,13 @@ export default class Pass {
     if (this.pingPong) {
       this.swap()
     }
+
+    this.texture?.generateMipmap(this.gl, this.width, this.height)
+  }
+
+  clear(): void {
+    this.readBufferIndex = 0
+    this.fbos.forEach(fbo => fbo.clear())
   }
 
   private get readFBO(): FBO | null {

@@ -34,7 +34,8 @@ export default class PipelineCompiler implements PipelineConfigCompiler {
       ...passConfig,
       textures,
       dependencies: [...new Set(textures.filter(textureName =>
-        textureName !== '' && textureName !== passConfig.name,
+        textureName !== ''
+        && textureName !== passConfig.name,
       ))],
       pingPong: textures.includes(passConfig.name) || Boolean(passConfig.pingPong),
     }

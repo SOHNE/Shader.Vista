@@ -1,9 +1,10 @@
 import type { Arrays, BufferInfo } from 'twgl.js'
+import type { GL } from '../types/gl'
 import {
   createBufferInfoFromArrays,
 } from 'twgl.js'
 
-const triangleCache = new WeakMap<WebGLRenderingContext, BufferInfo>()
+const triangleCache = new WeakMap<GL, BufferInfo>()
 
 /**
  * Provides a cached full-screen triangle (Screen Triangle) BufferInfo.
@@ -17,7 +18,7 @@ const triangleCache = new WeakMap<WebGLRenderingContext, BufferInfo>()
  *
  * @see {@link https://michaldrobot.com/2014/04/01/gcn-execution-patterns-in-full-screen-passes/}
  */
-export function getScreenTriangle(gl: WebGLRenderingContext): BufferInfo {
+export function getScreenTriangle(gl: GL): BufferInfo {
   let bufferInfo = triangleCache.get(gl)
 
   // Create vertex array object
