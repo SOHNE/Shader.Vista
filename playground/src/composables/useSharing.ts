@@ -1,34 +1,11 @@
 import { useClipboard } from '@vueuse/core'
-import { compressToEncodedURIComponent, decompressFromEncodedURIComponent } from 'lz-string'
+import { getSharedCodeFromUrl, syncSharedCodeToUrl } from './url'
 
 export function useSharing() {
   const { copy, copied } = useClipboard()
-  const CODE_PARAM = 'code'
-
-  function getHashParams(url: URL) {
-    return new URLSearchParams(url.hash.startsWith('#') ? url.hash.slice(1) : url.hash)
-  }
-
-  function getShareUrl(data: string) {
-    const url = new URL(window.location.href)
-    const hashParams = getHashParams(url)
-    const compressed = compressToEncodedURIComponent(data)
-
-    hashParams.set(CODE_PARAM, compressed)
-    url.hash = hashParams.toString()
-    url.searchParams.delete(CODE_PARAM)
-
-    return url.toString()
-  }
 
   function syncDataToUrl(data: string) {
-    const url = getShareUrl(data)
-
-    if (url !== window.location.href) {
-      window.history.replaceState({}, '', url)
-    }
-
-    return url
+    return syncSharedCodeToUrl(data)
   }
 
   async function share(data: string) {
@@ -37,15 +14,7 @@ export function useSharing() {
   }
 
   function getDataFromUrl() {
-    const url = new URL(window.location.href)
-    const hashParams = getHashParams(url)
-    const compressed = hashParams.get(CODE_PARAM)
-
-    if (compressed) {
-      return decompressFromEncodedURIComponent(compressed)
-    }
-
-    return null
+    return getSharedCodeFromUrl()
   }
 
   return {

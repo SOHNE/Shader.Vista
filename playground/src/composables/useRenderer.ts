@@ -1,9 +1,8 @@
 import type { Ref } from 'vue'
 import { onScopeDispose, readonly, ref } from 'vue'
+import { getSelectedVersionFromUrl } from './url'
 
 const isClient = typeof window !== 'undefined'
-const urlParams = isClient ? new URLSearchParams(window.location.search) : null
-const version = urlParams?.get('version') || 'latest'
 
 type RendererMetrics = {
   paused: boolean
@@ -31,6 +30,8 @@ export function useRenderer(canvasRef: Ref<HTMLCanvasElement | null>) {
   async function loadRenderer() {
     if (WebGLRenderer)
       return WebGLRenderer
+
+    const version = getSelectedVersionFromUrl()
 
     if (version === 'latest' || !isClient) {
       const mod = await import('@actis/core')

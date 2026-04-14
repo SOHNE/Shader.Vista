@@ -37,6 +37,9 @@ declare global {
   const getCurrentInstance: typeof import('vue').getCurrentInstance
   const getCurrentScope: typeof import('vue').getCurrentScope
   const getCurrentWatcher: typeof import('vue').getCurrentWatcher
+  const getSelectedVersionFromUrl: typeof import('./composables/url').getSelectedVersionFromUrl
+  const getShareUrl: typeof import('./composables/url').getShareUrl
+  const getSharedCodeFromUrl: typeof import('./composables/url').getSharedCodeFromUrl
   const h: typeof import('vue').h
   const ignorableWatch: typeof import('@vueuse/core').ignorableWatch
   const inject: typeof import('vue').inject
@@ -88,11 +91,15 @@ declare global {
   const refWithControl: typeof import('@vueuse/core').refWithControl
   const resolveComponent: typeof import('vue').resolveComponent
   const resolveRef: typeof import('@vueuse/core').resolveRef
+  const selectedVersion: typeof import('./composables/url').selectedVersion
+  const setSelectedVersionInUrl: typeof import('./composables/url').setSelectedVersionInUrl
   const shallowReactive: typeof import('vue').shallowReactive
   const shallowReadonly: typeof import('vue').shallowReadonly
   const shallowRef: typeof import('vue').shallowRef
   const syncRef: typeof import('@vueuse/core').syncRef
   const syncRefs: typeof import('@vueuse/core').syncRefs
+  const syncSelectedVersionFromUrl: typeof import('./composables/url').syncSelectedVersionFromUrl
+  const syncSharedCodeToUrl: typeof import('./composables/url').syncSharedCodeToUrl
   const templateRef: typeof import('@vueuse/core').templateRef
   const throttledRef: typeof import('@vueuse/core').throttledRef
   const throttledWatch: typeof import('@vueuse/core').throttledWatch
@@ -344,6 +351,9 @@ declare module 'vue' {
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly getCurrentWatcher: UnwrapRef<typeof import('vue')['getCurrentWatcher']>
+    readonly getSelectedVersionFromUrl: UnwrapRef<typeof import('./composables/url')['getSelectedVersionFromUrl']>
+    readonly getShareUrl: UnwrapRef<typeof import('./composables/url')['getShareUrl']>
+    readonly getSharedCodeFromUrl: UnwrapRef<typeof import('./composables/url')['getSharedCodeFromUrl']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
@@ -395,11 +405,15 @@ declare module 'vue' {
     readonly refWithControl: UnwrapRef<typeof import('@vueuse/core')['refWithControl']>
     readonly resolveComponent: UnwrapRef<typeof import('vue')['resolveComponent']>
     readonly resolveRef: UnwrapRef<typeof import('@vueuse/core')['resolveRef']>
+    readonly selectedVersion: UnwrapRef<typeof import('./composables/url')['selectedVersion']>
+    readonly setSelectedVersionInUrl: UnwrapRef<typeof import('./composables/url')['setSelectedVersionInUrl']>
     readonly shallowReactive: UnwrapRef<typeof import('vue')['shallowReactive']>
     readonly shallowReadonly: UnwrapRef<typeof import('vue')['shallowReadonly']>
     readonly shallowRef: UnwrapRef<typeof import('vue')['shallowRef']>
     readonly syncRef: UnwrapRef<typeof import('@vueuse/core')['syncRef']>
     readonly syncRefs: UnwrapRef<typeof import('@vueuse/core')['syncRefs']>
+    readonly syncSelectedVersionFromUrl: UnwrapRef<typeof import('./composables/url')['syncSelectedVersionFromUrl']>
+    readonly syncSharedCodeToUrl: UnwrapRef<typeof import('./composables/url')['syncSharedCodeToUrl']>
     readonly templateRef: UnwrapRef<typeof import('@vueuse/core')['templateRef']>
     readonly throttledRef: UnwrapRef<typeof import('@vueuse/core')['throttledRef']>
     readonly throttledWatch: UnwrapRef<typeof import('@vueuse/core')['throttledWatch']>

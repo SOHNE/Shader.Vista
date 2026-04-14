@@ -1,5 +1,6 @@
 import { onMounted, ref } from 'vue'
 import pkg from '../../package.json'
+import { selectedVersion, setSelectedVersionInUrl, syncSelectedVersionFromUrl } from './url'
 
 export function useVersions() {
   const versions = ref<string[]>([])
@@ -8,8 +9,8 @@ export function useVersions() {
   const gitSha = ref(__SHA__)
   const gitTag = ref(__LASTEST_TAG__)
   const gitTagSha = ref(__LASTEST_TAG_SHA__)
-  const urlParams = new URLSearchParams(window.location.search)
-  const selectedVersion = ref(urlParams.get('version') || 'latest')
+
+  syncSelectedVersionFromUrl()
 
   async function getVersionsList() {
     const res = await fetch('https://data.jsdelivr.com/v1/package/npm/@actis/core')
@@ -29,13 +30,7 @@ export function useVersions() {
   })
 
   function setVersion(version: string) {
-    if (version === 'latest') {
-      urlParams.delete('version')
-    }
-    else {
-      urlParams.set('version', version)
-    }
-    window.location.search = urlParams.toString()
+    setSelectedVersionInUrl(version)
   }
 
   function getReleaseLink(version: string) {
