@@ -15,6 +15,9 @@ const { share, copied } = useSharing()
     :title="copied ? 'URL Copied!' : 'Share Code'"
     @click="share(props.code)"
   >
-    <div :class="copied ? 'i-carbon-checkmark' : 'i-carbon-share'" class="text-base" />
+    <div
+      :class="copied ? 'i-carbon-checkmark-outline text-green-600' : 'i-carbon-share'"
+      class="text-base"
+    />
   </button>
 </template>
