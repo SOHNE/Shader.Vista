@@ -299,9 +299,8 @@ export default class WebGLRenderer {
       return
     }
 
+    let setupFailed = false
     pipelinePlan.passes.forEach((passConfig) => {
-      this.passConfigs.set(passConfig.name, passConfig)
-
       try {
         const shader = new Shader(
           this.gl,
@@ -329,6 +328,7 @@ export default class WebGLRenderer {
           pass,
           passConfig.dependencies,
         )
+        this.passConfigs.set(passConfig.name, passConfig)
 
         // Map this pass's texture to its name
         if (pass.texture) {
@@ -336,9 +336,18 @@ export default class WebGLRenderer {
         }
       }
       catch (error: unknown) {
+        setupFailed = true
         console.error(`Error in pass ${passConfig.name}: ${(error as any).message}`)
       }
     })
+
+    if (setupFailed) {
+      this.pipeline.clear()
+      this.passConfigs.clear()
+      this.textureMap.clear()
+      this.clearCanvas()
+      return
+    }
 
     this.syncPassTextures()
   }
