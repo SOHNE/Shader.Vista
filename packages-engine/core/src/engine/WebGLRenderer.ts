@@ -1,7 +1,15 @@
 import type { BufferInfo } from 'twgl.js'
 import type Texture from '../texture/Texture'
-import type { GL, PipelinePlan, RendererConfig, RendererMetrics, ResolvedPassConfig } from '../types'
+import type {
+  GL,
+  GLContextCapabilities,
+  PipelinePlan,
+  RendererConfig,
+  RendererMetrics,
+  ResolvedPassConfig,
+} from '../types'
 import { bindFramebufferInfo, drawBufferInfo, setBuffersAndAttributes, setUniforms } from 'twgl.js'
+import { detectGLContextCapabilities } from '../context/ContextCapabilities'
 import Pass from '../pass/Pass'
 import Pipeline from '../pipeline/Pipeline'
 import PipelineCompiler from '../pipeline/PipelineCompiler'
@@ -24,6 +32,7 @@ export default class WebGLRenderer {
   `
 
   private gl: GL
+  private readonly capabilities: GLContextCapabilities
   private pipeline: Pipeline
   private canvas: HTMLCanvasElement
   private animationRequestID: number
@@ -56,6 +65,7 @@ export default class WebGLRenderer {
     this.canvas = canvas
     this.animationRequestID = -1
     this.gl = this.initializeWebGLContext(canvas)
+    this.capabilities = detectGLContextCapabilities(this.gl)
     this.pipeline = new Pipeline()
     this.passConfigs = new Map()
     this.textureMap = new Map()
@@ -303,6 +313,7 @@ export default class WebGLRenderer {
 
         const pass = new Pass(
           this.gl,
+          this.capabilities,
           shader,
           this.screenTriangle,
           displayWidth,

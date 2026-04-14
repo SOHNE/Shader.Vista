@@ -1,7 +1,8 @@
-import type { GL } from '../types/gl'
+import type { GL, GLContextCapabilities } from '../types/gl'
 import type { TextureOptions } from '../types/texture'
 import type { TextureFramebufferAttachmentOptions } from './TextureParameters'
 import { setTextureFilteringForSize, setTextureParameters } from 'twgl.js'
+import { detectGLContextCapabilities } from '../context/ContextCapabilities'
 import {
   getTextureFramebufferAttachmentOptions,
   shouldUpdateTextureFiltering,
@@ -13,11 +14,18 @@ import {
  */
 export default class Texture {
   public readonly name: string
+  private capabilities?: GLContextCapabilities
   private readonly options: Readonly<TextureOptions>
   private handleValue: WebGLTexture | undefined
 
-  constructor(name: string, options: TextureOptions = {}, handle?: WebGLTexture) {
+  constructor(
+    name: string,
+    options: TextureOptions = {},
+    handle?: WebGLTexture,
+    capabilities?: GLContextCapabilities,
+  ) {
     this.name = name
+    this.capabilities = capabilities
     this.options = Object.freeze({ ...options })
     this.handleValue = handle
   }
@@ -58,11 +66,19 @@ export default class Texture {
   public getFramebufferAttachmentOptions(
     gl: GL,
   ): TextureFramebufferAttachmentOptions {
-    return getTextureFramebufferAttachmentOptions(gl, this.options)
+    return getTextureFramebufferAttachmentOptions(gl, this.getCapabilities(gl), this.options)
   }
 
   public setHandle(handle?: WebGLTexture): this {
     this.handleValue = handle
     return this
+  }
+
+  private getCapabilities(gl: GL): GLContextCapabilities {
+    if (!this.capabilities) {
+      this.capabilities = detectGLContextCapabilities(gl)
+    }
+
+    return this.capabilities
   }
 }

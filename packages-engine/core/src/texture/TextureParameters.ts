@@ -1,6 +1,7 @@
 import type { AttachmentOptions } from 'twgl.js'
-import type { GL } from '../types/gl'
+import type { GL, GLContextCapabilities } from '../types/gl'
 import type { TextureFilterMode, TextureOptions, TextureWrapMode } from '../types/texture'
+import { resolveFramebufferAttachmentOptions } from '../fbo/FramebufferAttachmentSupport'
 
 type TextureFilterKey = Exclude<TextureFilterMode, number>
 type TextureWrapKey = Exclude<TextureWrapMode, number>
@@ -9,6 +10,7 @@ export type TextureFramebufferAttachmentOptions = AttachmentOptions
 
 export function getTextureFramebufferAttachmentOptions(
   gl: GL,
+  capabilities: GLContextCapabilities,
   options: Readonly<TextureOptions>,
 ): TextureFramebufferAttachmentOptions {
   const {
@@ -31,17 +33,22 @@ export function getTextureFramebufferAttachmentOptions(
   const resolvedWrap = resolveTextureWrap(gl, wrap)
   const resolvedWrapS = resolveTextureWrap(gl, wrapS)
   const resolvedWrapT = resolveTextureWrap(gl, wrapT)
+  const shouldDefaultToFloatType = rest.type === undefined
+    && rest.attachment === undefined
+    && rest.internalFormat === undefined
+    && (rest.format === undefined || rest.format === gl.RGBA)
 
-  return {
+  return resolveFramebufferAttachmentOptions(gl, capabilities, {
     ...rest,
     auto: auto ?? generateMipmaps,
+    ...(shouldDefaultToFloatType && { type: gl.FLOAT }),
     ...(resolvedMag !== undefined && { mag: resolvedMag }),
     ...(resolvedMin !== undefined && { min: resolvedMin }),
     ...(resolvedMinMag !== undefined && { minMag: resolvedMinMag }),
     ...(resolvedWrap !== undefined && { wrap: resolvedWrap }),
     ...(resolvedWrapS !== undefined && { wrapS: resolvedWrapS }),
     ...(resolvedWrapT !== undefined && { wrapT: resolvedWrapT }),
-  }
+  })
 }
 
 export function shouldUpdateTextureFiltering(options: Readonly<TextureOptions>): boolean {

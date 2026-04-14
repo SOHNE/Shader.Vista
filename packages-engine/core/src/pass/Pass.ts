@@ -1,6 +1,6 @@
 import type { BufferInfo } from 'twgl.js'
 import type Shader from '../shader/Shader'
-import type { GL } from '../types/gl'
+import type { GL, GLContextCapabilities } from '../types/gl'
 import type { TextureOptions } from '../types/texture'
 import { bindFramebufferInfo, drawBufferInfo, setBuffersAndAttributes, setUniforms } from 'twgl.js'
 import FBO from '../fbo/FBO'
@@ -23,6 +23,7 @@ export default class Pass {
 
   constructor(
     gl: GL,
+    capabilities: GLContextCapabilities,
     shader: Shader,
     geometry: BufferInfo,
     width: number,
@@ -48,9 +49,10 @@ export default class Pass {
       for (let index = 0; index < framebufferCount; index++) {
         this.fbos.push(new FBO(
           gl,
+          capabilities,
           width,
           height,
-          new Texture(shader.passName, textureOptions),
+          new Texture(shader.passName, textureOptions, undefined, capabilities),
         ))
       }
     }
