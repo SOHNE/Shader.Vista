@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { PassConfig } from '@actis/core'
-import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
+import { breakpointsTailwind, useBreakpoints, useEventListener } from '@vueuse/core'
 import { Pane, Splitpanes } from 'splitpanes'
 import { computed, ref, watch } from 'vue'
 import { usePasses } from '../composables/usePasses'
@@ -66,20 +66,79 @@ watch(pipelineCode, (newJs) => {
 // We only share the raw configuration data for better robustness
 const shareData = computed(() => JSON.stringify(passes.value))
 
-const { getDataFromUrl } = useSharing()
+const { getDataFromUrl, syncDataToUrl } = useSharing()
+let shouldSkipNextShareUrlSync = false
 
-// Check for shared code on mount
-const sharedContent = getDataFromUrl()
-if (sharedContent) {
+function getDefaultPasses() {
+  return DEFAULT_PIPELINE.map(pass => normalizePassConfig(JSON.parse(JSON.stringify(pass)) as PassConfig))
+}
+
+function getPreferredActivePassIndex(nextPasses: PassConfig[]) {
+  const mainBufferIndex = nextPasses.findIndex(pass => pass.name === 'MainBuffer')
+  return mainBufferIndex >= 0 ? mainBufferIndex : 0
+}
+
+function setPasses(nextPasses: PassConfig[], skipUrlSync = false) {
+  shouldSkipNextShareUrlSync = skipUrlSync
+  passes.value = nextPasses
+  activePassIndex.value = getPreferredActivePassIndex(nextPasses)
+}
+
+function applySharedPassesFromUrl(isExternalNavigation = false) {
+  const sharedContent = getDataFromUrl()
+
+  if (!sharedContent) {
+    if (isExternalNavigation) {
+      setPasses(getDefaultPasses(), true)
+    }
+    return false
+  }
+
   try {
     const parsed = JSON.parse(sharedContent)
     if (Array.isArray(parsed)) {
-      passes.value = parsed.map(pass => normalizePassConfig(pass as PassConfig))
+      setPasses(
+        parsed.map(pass => normalizePassConfig(pass as PassConfig)),
+        isExternalNavigation,
+      )
+      return true
     }
   }
   catch (e) {
     console.error('Failed to parse shared passes:', e)
   }
+
+  return false
+}
+
+const hasLoadedSharedPasses = applySharedPassesFromUrl()
+
+let hasInitializedShareUrlSync = false
+watch(shareData, (nextShareData) => {
+  if (!hasInitializedShareUrlSync) {
+    hasInitializedShareUrlSync = true
+
+    if (!hasLoadedSharedPasses) {
+      return
+    }
+  }
+
+  if (shouldSkipNextShareUrlSync) {
+    shouldSkipNextShareUrlSync = false
+    return
+  }
+
+  syncDataToUrl(nextShareData)
+}, { immediate: true })
+
+if (typeof window !== 'undefined') {
+  useEventListener(window, 'hashchange', () => {
+    applySharedPassesFromUrl(true)
+  })
+
+  useEventListener(window, 'popstate', () => {
+    applySharedPassesFromUrl(true)
+  })
 }
 
 const breakpoints = useBreakpoints(breakpointsTailwind)

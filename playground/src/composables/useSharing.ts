@@ -21,9 +21,18 @@ export function useSharing() {
     return url.toString()
   }
 
-  async function share(data: string) {
+  function syncDataToUrl(data: string) {
     const url = getShareUrl(data)
-    window.history.replaceState({}, '', url)
+
+    if (url !== window.location.href) {
+      window.history.replaceState({}, '', url)
+    }
+
+    return url
+  }
+
+  async function share(data: string) {
+    const url = syncDataToUrl(data)
     await copy(url)
   }
 
@@ -43,5 +52,6 @@ export function useSharing() {
     share,
     copied,
     getDataFromUrl,
+    syncDataToUrl,
   }
 }
