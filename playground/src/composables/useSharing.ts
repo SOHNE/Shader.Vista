@@ -3,11 +3,21 @@ import { compressToEncodedURIComponent, decompressFromEncodedURIComponent } from
 
 export function useSharing() {
   const { copy, copied } = useClipboard()
+  const CODE_PARAM = 'code'
+
+  function getHashParams(url: URL) {
+    return new URLSearchParams(url.hash.startsWith('#') ? url.hash.slice(1) : url.hash)
+  }
 
   function getShareUrl(data: string) {
     const url = new URL(window.location.href)
+    const hashParams = getHashParams(url)
     const compressed = compressToEncodedURIComponent(data)
-    url.searchParams.set('code', compressed)
+
+    hashParams.set(CODE_PARAM, compressed)
+    url.hash = hashParams.toString()
+    url.searchParams.delete(CODE_PARAM)
+
     return url.toString()
   }
 
@@ -18,11 +28,14 @@ export function useSharing() {
   }
 
   function getDataFromUrl() {
-    const params = new URLSearchParams(window.location.search)
-    const compressed = params.get('code')
+    const url = new URL(window.location.href)
+    const hashParams = getHashParams(url)
+    const compressed = hashParams.get(CODE_PARAM)
+
     if (compressed) {
       return decompressFromEncodedURIComponent(compressed)
     }
+
     return null
   }
 
