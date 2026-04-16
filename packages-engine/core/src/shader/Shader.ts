@@ -1,5 +1,5 @@
 import type { ProgramInfo } from 'twgl.js'
-import type { ShaderError } from '../types'
+import type { ShaderError, ShaderUniformMap } from '../types'
 import type { GL, GLContextCapabilities } from '../types/gl'
 import { createProgramInfo, setUniforms } from 'twgl.js'
 
@@ -75,7 +75,7 @@ export default class Shader {
     this.gl.useProgram(this.programInfo.program)
   }
 
-  public setUniforms(uniforms: { [key: string]: any }): void {
+  public setUniforms(uniforms: ShaderUniformMap): void {
     setUniforms(this.programInfo, uniforms)
   }
 

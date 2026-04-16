@@ -16,4 +16,8 @@ export type {
   RendererConfig,
   RendererContext,
   RendererMetrics,
+  ShaderUniformMap,
+  UniformContext,
+  UniformContextTarget,
+  UniformProvider,
 } from './types'
