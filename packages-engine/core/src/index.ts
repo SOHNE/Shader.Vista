@@ -9,4 +9,11 @@ export type {
   TextureOptions,
   TextureWrapMode,
 } from './texture'
-export type { GL, PassConfig, RendererConfig, RendererMetrics } from './types'
+export type {
+  GL,
+  GLContextVersion,
+  PassConfig,
+  RendererConfig,
+  RendererContext,
+  RendererMetrics,
+} from './types'
