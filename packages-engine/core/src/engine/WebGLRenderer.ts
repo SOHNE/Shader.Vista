@@ -8,13 +8,15 @@ import type {
   RendererContext,
   RendererMetrics,
   ResolvedPassConfig,
+  UniformProvider,
 } from '../types'
-import { bindFramebufferInfo, drawBufferInfo, setBuffersAndAttributes, setUniforms } from 'twgl.js'
+import { bindFramebufferInfo, drawBufferInfo, setBuffersAndAttributes } from 'twgl.js'
 import { detectGLContextCapabilities } from '../context/ContextCapabilities'
 import Pass from '../pass/Pass'
 import Pipeline from '../pipeline/Pipeline'
 import PipelineCompiler from '../pipeline/PipelineCompiler'
 import Shader from '../shader/Shader'
+import { UniformManager } from '../uniform'
 import { getScreenTriangle } from './ScreenTriangle'
 
 /**
@@ -44,6 +46,7 @@ export default class WebGLRenderer {
   private readonly compiler: PipelineCompiler
   private readonly presentShader: Shader
   private readonly screenTriangle: BufferInfo
+  private readonly uniformManager: UniformManager
 
   public mouseX: number
   public mouseY: number
@@ -73,6 +76,14 @@ export default class WebGLRenderer {
     this.now = new Date()
     this.compiler = new PipelineCompiler()
     this.screenTriangle = getScreenTriangle(this.gl)
+    this.uniformManager = new UniformManager(() => ({
+      now: this.now,
+      frame: this.currentFrame,
+      frameRate: this.frameRate,
+      mouse: [this.mouseX, this.mouseY],
+      time: this.currentTime,
+      timeDelta: this.timeDelta,
+    }))
     this.onError = onError || (({ passName, coords }) => {
       console.error(`[Actis] Error in pass "${passName}" at line ${coords.line}: ${coords.message}`)
     })
@@ -216,25 +227,12 @@ export default class WebGLRenderer {
     }
   }
 
-  private updateUniforms(pass: Pass): void {
-    const uniforms = {
-      u_date: [
-        this.now.getFullYear(),
-        this.now.getMonth() + 1,
-        this.now.getDate(),
-        this.now.getHours() * 3600
-        + this.now.getMinutes() * 60
-        + this.now.getSeconds()
-        + this.now.getMilliseconds() / 1000,
-      ],
-      u_frame: this.currentFrame,
-      u_time: this.currentTime,
-      u_timeDelta: this.timeDelta,
-      u_frameRate: this.frameRate,
-      u_resolution: [pass.width, pass.height],
-      u_mouse: [this.mouseX, this.mouseY],
-    }
-    pass.shader.setUniforms(uniforms)
+  public registerUniformProvider(provider: UniformProvider): void {
+    this.uniformManager.registerProvider(provider)
+  }
+
+  public unregisterUniformProvider(providerId: string): boolean {
+    return this.uniformManager.unregisterProvider(providerId)
   }
 
   private updateTime(currentTime?: number): void {
@@ -398,7 +396,12 @@ export default class WebGLRenderer {
     this.pipeline.forEach((pass) => {
       this.syncPassTexturesForPass(pass)
       pass.use()
-      this.updateUniforms(pass)
+      pass.shader.setUniforms(this.uniformManager.resolve({
+        target: 'pass',
+        passName: pass.shader.passName,
+        resolution: [pass.width, pass.height],
+        textures: pass.textures,
+      }))
       pass.draw()
       this.updateTextureMapForPass(pass)
 
@@ -463,10 +466,12 @@ export default class WebGLRenderer {
 
     this.presentShader.use()
     setBuffersAndAttributes(this.gl, this.presentShader.programInfo, this.screenTriangle)
-    setUniforms(this.presentShader.programInfo, {
-      u_texture0: texture.handle,
-      u_resolution: [this.gl.canvas.width, this.gl.canvas.height],
-    })
+    this.presentShader.setUniforms(this.uniformManager.resolve({
+      target: 'present',
+      passName: this.presentShader.passName,
+      resolution: [this.gl.canvas.width, this.gl.canvas.height],
+      textures: [texture],
+    }))
     drawBufferInfo(this.gl, this.screenTriangle)
   }
 

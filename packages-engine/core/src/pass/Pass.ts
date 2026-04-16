@@ -2,7 +2,7 @@ import type { BufferInfo } from 'twgl.js'
 import type Shader from '../shader/Shader'
 import type { GL, GLContextCapabilities } from '../types/gl'
 import type { TextureOptions } from '../types/texture'
-import { bindFramebufferInfo, drawBufferInfo, setBuffersAndAttributes, setUniforms } from 'twgl.js'
+import { bindFramebufferInfo, drawBufferInfo, setBuffersAndAttributes } from 'twgl.js'
 import FBO from '../fbo/FBO'
 import Texture from '../texture/Texture'
 
@@ -88,16 +88,6 @@ export default class Pass {
 
   draw() {
     setBuffersAndAttributes(this.gl, this.shader.programInfo, this.bufferInfo)
-
-    const uniforms: { [key: string]: any } = {}
-    this.textures.forEach((texture, index) => {
-      const { handle } = texture
-      if (handle) {
-        uniforms[`u_texture${index}`] = handle
-      }
-    })
-
-    setUniforms(this.shader.programInfo, uniforms)
     drawBufferInfo(this.gl, this.bufferInfo)
 
     if (this.pingPong) {
