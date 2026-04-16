@@ -77,6 +77,7 @@ export default class WebGLRenderer {
     })
     this.presentShader = new Shader(
       this.gl,
+      this.capabilities,
       undefined,
       WebGLRenderer.presentFragmentShader,
       () => { },
@@ -304,6 +305,7 @@ export default class WebGLRenderer {
       try {
         const shader = new Shader(
           this.gl,
+          this.capabilities,
           passConfig.vertexShader,
           passConfig.fragmentShader,
           this.onError,
