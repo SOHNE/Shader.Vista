@@ -5,6 +5,7 @@ import type {
   GLContextCapabilities,
   PipelinePlan,
   RendererConfig,
+  RendererContext,
   RendererMetrics,
   ResolvedPassConfig,
 } from '../types'
@@ -182,6 +183,13 @@ export default class WebGLRenderer {
       width: this.canvas.width,
       height: this.canvas.height,
     }
+  }
+
+  public getContextState(): RendererContext {
+    return Object.freeze({
+      capabilities: this.capabilities,
+      webglVersion: this.capabilities.isWebGL2 ? 2 : 1,
+    })
   }
 
   public clear(): void {

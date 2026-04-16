@@ -1,3 +1,4 @@
+export * from './context'
 export * from './gl'
 export * from './pipeline'
 export * from './renderer'
