@@ -14,7 +14,7 @@ export default defineConfig({
     'icon-btn': 'op75 hover:op-100 transition-opacity cursor-pointer',
     'flex-center': 'flex items-center justify-center',
 
-    'badge': 'px-1.5 py-0.5 rounded text-sm font-bold',
+    'badge': 'inline-flex items-center justify-center px-1.5 min-w-4 h-4 rounded-full text-sm font-bold leading-none',
     'p-item': 'px-3 py-1',
     'p-btn': 'px-3 py-1.5',
     'p-btn-sm': 'px-1.5 py-0.5',

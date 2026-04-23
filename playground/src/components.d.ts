@@ -14,12 +14,14 @@ declare module 'vue' {
     AssignmentPanel: typeof import('./components/Editor/TextureSelector/AssignmentPanel.vue')['default']
     Brand: typeof import('./components/Header/Brand.vue')['default']
     CodeMirror: typeof import('./components/Editor/CodeMirror.vue')['default']
+    CollapsiblePanel: typeof import('./components/panel/CollapsiblePanel.vue')['default']
     ControlPanel: typeof import('./components/Preview/ControlPanel.vue')['default']
     FullscreenButton: typeof import('./components/Preview/FullscreenButton.vue')['default']
     Header: typeof import('./components/Header/Header.vue')['default']
     Index: typeof import('./components/Editor/TextureSelector/Index.vue')['default']
     InfoPanel: typeof import('./components/Preview/InfoPanel.vue')['default']
     Item: typeof import('./components/Tabs/Item.vue')['default']
+    PanelGroup: typeof import('./components/panel/PanelGroup.vue')['default']
     PassEditor: typeof import('./components/Editor/PassEditor.vue')['default']
     Playground: typeof import('./components/Playground.vue')['default']
     Preview: typeof import('./components/Preview/Preview.vue')['default']
@@ -27,7 +29,6 @@ declare module 'vue' {
     Slot: typeof import('./components/Editor/TextureSelector/Slot.vue')['default']
     TabBar: typeof import('./components/Tabs/TabBar.vue')['default']
     ThemeToggle: typeof import('./components/Header/ThemeToggle.vue')['default']
-    Toggle: typeof import('./components/Editor/TextureSelector/Toggle.vue')['default']
     VersionSelector: typeof import('./components/Header/VersionSelector.vue')['default']
   }
 }

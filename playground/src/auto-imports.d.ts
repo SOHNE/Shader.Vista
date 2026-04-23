@@ -75,6 +75,7 @@ declare global {
   const pausableWatch: typeof import('@vueuse/core').pausableWatch
   const provide: typeof import('vue').provide
   const provideLocal: typeof import('@vueuse/core').provideLocal
+  const providePanelGroup: typeof import('./composables/usePanelGroup').providePanelGroup
   const reactify: typeof import('@vueuse/core').reactify
   const reactifyObject: typeof import('@vueuse/core').reactifyObject
   const reactive: typeof import('vue').reactive
@@ -217,6 +218,7 @@ declare global {
   const useOnline: typeof import('@vueuse/core').useOnline
   const useOtherPasses: typeof import('./composables/useTextureSelector').useOtherPasses
   const usePageLeave: typeof import('@vueuse/core').usePageLeave
+  const usePanelGroup: typeof import('./composables/usePanelGroup').usePanelGroup
   const useParallax: typeof import('@vueuse/core').useParallax
   const useParentElement: typeof import('@vueuse/core').useParentElement
   const usePasses: typeof import('./composables/usePasses').usePasses
@@ -389,6 +391,7 @@ declare module 'vue' {
     readonly pausableWatch: UnwrapRef<typeof import('@vueuse/core')['pausableWatch']>
     readonly provide: UnwrapRef<typeof import('vue')['provide']>
     readonly provideLocal: UnwrapRef<typeof import('@vueuse/core')['provideLocal']>
+    readonly providePanelGroup: UnwrapRef<typeof import('./composables/usePanelGroup')['providePanelGroup']>
     readonly reactify: UnwrapRef<typeof import('@vueuse/core')['reactify']>
     readonly reactifyObject: UnwrapRef<typeof import('@vueuse/core')['reactifyObject']>
     readonly reactive: UnwrapRef<typeof import('vue')['reactive']>
@@ -530,6 +533,7 @@ declare module 'vue' {
     readonly useOffsetPagination: UnwrapRef<typeof import('@vueuse/core')['useOffsetPagination']>
     readonly useOnline: UnwrapRef<typeof import('@vueuse/core')['useOnline']>
     readonly usePageLeave: UnwrapRef<typeof import('@vueuse/core')['usePageLeave']>
+    readonly usePanelGroup: UnwrapRef<typeof import('./composables/usePanelGroup')['usePanelGroup']>
     readonly useParallax: UnwrapRef<typeof import('@vueuse/core')['useParallax']>
     readonly useParentElement: UnwrapRef<typeof import('@vueuse/core')['useParentElement']>
     readonly usePasses: UnwrapRef<typeof import('./composables/usePasses')['usePasses']>

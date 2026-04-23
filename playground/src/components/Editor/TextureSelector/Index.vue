@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import type { PassConfig } from '@actis/core'
 import { computed, ref, watch } from 'vue'
+import CollapsiblePanel from '../../panel/CollapsiblePanel.vue'
 import AssignmentPanel from './AssignmentPanel.vue'
 import Slot from './Slot.vue'
-import Toggle from './Toggle.vue'
 
 type Props = {
+  index: number
   activePass: PassConfig
   passes: PassConfig[]
 }
@@ -17,14 +18,7 @@ type Emits = {
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
-const isOpen = ref(true)
 const selectingIndex = ref<number | null>(null)
-
-// When closed, clear selection
-watch(isOpen, (val) => {
-  if (!val)
-    selectingIndex.value = null
-})
 
 // When active pass changes, clear selection
 watch(() => props.activePass.name, () => {
@@ -67,46 +61,61 @@ function handleAssign(passName: string | null) {
     assignTexture(selectingIndex.value, passName)
   }
 }
+
+function handleOpenChange(isOpen: boolean) {
+  if (!isOpen) {
+    selectingIndex.value = null
+  }
+}
 </script>
 
 <template>
-  <div class="border-t border-border bg-canvas flex flex-shrink-0 flex-col select-none transition-all">
-    <!-- Header/Toggle Button -->
-    <Toggle
-      :is-open="isOpen"
-      :texture-count="textureCount"
-      @toggle="isOpen = !isOpen"
-    />
+  <CollapsiblePanel
+    :index="index"
+    content-class="min-h-0"
+    body-class="p-4 flex flex-1 min-h-0 flex-col gap-4 overflow-y-auto"
+    @open-change="handleOpenChange"
+  >
+    <template #header="{ isOpen }">
+      <div class="flex gap-2 items-center">
+        <div class="i-carbon-image-reference transition-colors" :class="isOpen ? 'text-accent' : 'text-dim'" />
+        <span
+          class="text-xs tracking-wider font-semibold uppercase transition-colors"
+          :class="isOpen ? 'text-main' : 'text-dim'"
+        >
+          Textures
+        </span>
 
-    <!-- Content Area -->
-    <div v-show="isOpen" class="flex flex-col max-h-72 w-full overflow-hidden">
-      <div class="p-4 flex flex-col gap-4 overflow-y-auto">
-        <!-- Channel Slots Container -->
-        <div class="pb-2 flex w-full justify-center overflow-x-auto">
-          <div class="gap-3 grid grid-cols-4 max-w-2xl min-w-[320px] w-full">
-            <Slot
-              v-for="i in 4"
-              :key="i - 1"
-              :index="i - 1"
-              :texture-name="activePass.textures[i - 1]"
-              :is-selected="selectingIndex === i - 1"
-              @click="handleSlotClick(i - 1)"
-              @remove="handleSlotRemove(i - 1)"
-            />
-          </div>
-        </div>
+        <span v-if="textureCount" class="badge text-white text-center bg-accent min-w-4 dark:text-gray-950">
+          {{ textureCount }}
+        </span>
+      </div>
+    </template>
 
-        <!-- Selector List -->
-        <AssignmentPanel
-          v-if="selectingIndex !== null"
-          :selecting-index="selectingIndex"
-          :active-pass-textures="activePass.textures"
-          :active-pass-name="activePass.name"
-          :available-passes="availablePasses"
-          @assign="handleAssign"
-          @close="selectingIndex = null"
+    <!-- Channel Slots Container -->
+    <div class="pb-2 flex w-full justify-center overflow-x-auto">
+      <div class="gap-3 grid grid-cols-4 max-w-2xl min-w-[320px] w-full">
+        <Slot
+          v-for="i in 4"
+          :key="i - 1"
+          :index="i - 1"
+          :texture-name="activePass.textures[i - 1]"
+          :is-selected="selectingIndex === i - 1"
+          @click="handleSlotClick(i - 1)"
+          @remove="handleSlotRemove(i - 1)"
         />
       </div>
     </div>
-  </div>
+
+    <!-- Selector List -->
+    <AssignmentPanel
+      v-if="selectingIndex !== null"
+      :selecting-index="selectingIndex"
+      :active-pass-textures="activePass.textures"
+      :active-pass-name="activePass.name"
+      :available-passes="availablePasses"
+      @assign="handleAssign"
+      @close="selectingIndex = null"
+    />
+  </CollapsiblePanel>
 </template>
