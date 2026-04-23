@@ -12,7 +12,7 @@ export type UniformContext = Readonly<{
   passName: string
   resolution: readonly [number, number]
   target: UniformContextTarget
-  textures: readonly Texture[]
+  textures: readonly (Texture | undefined)[]
   time: number
   timeDelta: number
 }>

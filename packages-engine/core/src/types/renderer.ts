@@ -1,5 +1,7 @@
 import type { TextureOptions } from './texture'
 
+export const TEXTURE_CHANNEL_COUNT = 4
+
 export type PassConfig = {
   name: string
   fragmentShader: string

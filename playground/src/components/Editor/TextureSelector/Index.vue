@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { PassConfig } from '@actis/core'
+import { TEXTURE_CHANNEL_COUNT } from '@actis/core'
 import { computed, ref, watch } from 'vue'
 import CollapsiblePanel from '../../panel/CollapsiblePanel.vue'
 import AssignmentPanel from './AssignmentPanel.vue'
@@ -96,7 +97,7 @@ function handleOpenChange(isOpen: boolean) {
     <div class="pb-2 flex w-full justify-center overflow-x-auto">
       <div class="gap-3 grid grid-cols-4 max-w-2xl min-w-[320px] w-full">
         <Slot
-          v-for="i in 4"
+          v-for="i in TEXTURE_CHANNEL_COUNT"
           :key="i - 1"
           :index="i - 1"
           :texture-name="activePass.textures[i - 1]"

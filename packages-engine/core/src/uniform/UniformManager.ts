@@ -21,7 +21,7 @@ type UniformResolutionRequest = Readonly<{
   passName: string
   resolution: readonly [number, number]
   target: UniformContextTarget
-  textures?: readonly Texture[]
+  textures?: readonly (Texture | undefined)[]
 }>
 
 const DATE_UNIFORM_PROVIDER: UniformProvider = {
@@ -63,9 +63,7 @@ const TEXTURE_UNIFORM_PROVIDER: UniformProvider = {
     }
 
     return textures.reduce<ShaderUniformMap>((uniforms, texture, index) => {
-      if (texture.handle) {
-        uniforms[`u_texture${index}`] = texture.handle
-      }
+      uniforms[`u_texture${index}`] = texture?.handle ?? null
       return uniforms
     }, {})
   },

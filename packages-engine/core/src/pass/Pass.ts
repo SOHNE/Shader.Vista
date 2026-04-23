@@ -16,7 +16,7 @@ export default class Pass {
   height: number
   offscreen: boolean
   pingPong: boolean
-  textures: Texture[]
+  textures: Array<Texture | undefined>
   bufferInfo: BufferInfo
   private fbos: FBO[]
   private readBufferIndex: number
@@ -29,7 +29,7 @@ export default class Pass {
     width: number,
     height: number,
     offscreen = true,
-    textures: Texture[] = [],
+    textures: Array<Texture | undefined> = [],
     pingPong = false,
     textureOptions: TextureOptions = {},
   ) {

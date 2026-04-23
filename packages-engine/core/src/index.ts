@@ -9,6 +9,7 @@ export type {
   TextureOptions,
   TextureWrapMode,
 } from './texture'
+export { TEXTURE_CHANNEL_COUNT } from './types'
 export type {
   GL,
   GLContextVersion,

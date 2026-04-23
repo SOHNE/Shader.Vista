@@ -16,6 +16,7 @@ import Pass from '../pass/Pass'
 import Pipeline from '../pipeline/Pipeline'
 import PipelineCompiler from '../pipeline/PipelineCompiler'
 import Shader from '../shader/Shader'
+import { TEXTURE_CHANNEL_COUNT } from '../types'
 import { UniformManager } from '../uniform'
 import { getScreenTriangle } from './ScreenTriangle'
 
@@ -396,12 +397,13 @@ export default class WebGLRenderer {
     this.pipeline.forEach((pass) => {
       this.syncPassTexturesForPass(pass)
       pass.use()
-      pass.shader.setUniforms(this.uniformManager.resolve({
+      const uniforms = this.uniformManager.resolve({
         target: 'pass',
         passName: pass.shader.passName,
         resolution: [pass.width, pass.height],
-        textures: pass.textures,
-      }))
+        textures: this.getTextureBindings(pass.textures),
+      })
+      pass.shader.setUniforms(uniforms)
       pass.draw()
       this.updateTextureMapForPass(pass)
 
@@ -435,16 +437,15 @@ export default class WebGLRenderer {
       return
     }
 
-    pass.textures = passConfig.textures.reduce<Texture[]>((textures, textureName) => {
+    pass.textures = passConfig.textures.map((textureName) => {
       const texture = this.textureMap.get(textureName)
       if (!texture) {
         console.warn(`Texture ${textureName} not found for pass ${passName}`)
-        return textures
+        return undefined
       }
 
-      textures.push(texture)
-      return textures
-    }, [])
+      return texture
+    })
   }
 
   private updateTextureMapForPass(pass: Pass): void {
@@ -466,13 +467,19 @@ export default class WebGLRenderer {
 
     this.presentShader.use()
     setBuffersAndAttributes(this.gl, this.presentShader.programInfo, this.screenTriangle)
-    this.presentShader.setUniforms(this.uniformManager.resolve({
+    const uniforms = this.uniformManager.resolve({
       target: 'present',
       passName: this.presentShader.passName,
       resolution: [this.gl.canvas.width, this.gl.canvas.height],
-      textures: [texture],
-    }))
+      textures: this.getTextureBindings([texture]),
+    })
+    this.presentShader.setUniforms(uniforms)
     drawBufferInfo(this.gl, this.screenTriangle)
+  }
+
+  private getTextureBindings(textures: readonly (Texture | undefined)[]): Array<Texture | undefined> {
+    const slotCount = Math.max(TEXTURE_CHANNEL_COUNT, textures.length)
+    return Array.from({ length: slotCount }, (_, index) => textures[index])
   }
 
   private cancelAnimationLoop(): void {
