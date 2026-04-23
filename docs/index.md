@@ -8,8 +8,11 @@ hero:
   tagline: "Designed with multipass support in mind."
   actions:
     - theme: brand
+      text: Open Playground
+      link: /play/
+    - theme: alt
       text: Getting Started
-      link: /getting-started
+      link: /guide/
     - theme: alt
       text: View on GitHub
       link: https://github.com/SOHNE/Actis
