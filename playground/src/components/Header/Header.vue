@@ -20,6 +20,12 @@ defineProps<{
 
     <div class="flex flex-shrink-0 gap-2 items-center sm:gap-3">
       <Share :code="code" />
+
+      <a
+        i-carbon:document-multiple-01 icon-btn href="https://actisgl.netlify.app/" target="_blank"
+        title="Documentations"
+      />
+
       <a
         href="https://github.com/SOHNE/Actis" target="_blank" class="i-simple-icons-github text-base icon-btn"
         title="GitHub Repository"
