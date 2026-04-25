@@ -67,6 +67,17 @@ export default await antfu(
   },
   {
     files: [
+      'package-integrations/**/*.?([mc])ts',
+    ],
+    rules: {
+      'unocss/order': 'off',
+      'unocss/order-attributify': 'off',
+      'unocss/blocklist': 'off',
+      'unocss/enforce-class-compile': 'off',
+    },
+  },
+  {
+    files: [
       '*.d.ts',
     ],
     rules: {

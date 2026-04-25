@@ -283,6 +283,39 @@ importers:
         specifier: catalog:build
         version: 3.5.32(typescript@6.0.2)
 
+  package-integrations/codemirror:
+    devDependencies:
+      '@codemirror/autocomplete':
+        specifier: catalog:dev-tools
+        version: 6.20.1
+      '@codemirror/lang-cpp':
+        specifier: catalog:dev-tools
+        version: 6.0.3
+      '@codemirror/language':
+        specifier: catalog:dev-tools
+        version: 6.12.3
+      '@codemirror/lint':
+        specifier: catalog:dev-tools
+        version: 6.9.5
+      '@codemirror/state':
+        specifier: catalog:dev-tools
+        version: 6.6.0
+      '@codemirror/view':
+        specifier: catalog:dev-tools
+        version: 6.41.0
+      '@lezer/highlight':
+        specifier: catalog:dev-tools
+        version: 1.2.3
+      codemirror:
+        specifier: catalog:dev-tools
+        version: 6.0.2
+      tsdown:
+        specifier: catalog:build
+        version: 0.21.8(@typescript/native-preview@7.0.0-dev.20260325.1)(publint@0.3.18)(synckit@0.11.12)(typescript@5.9.3)
+      typescript:
+        specifier: catalog:typescript
+        version: 5.9.3
+
   packages-engine/core:
     dependencies:
       twgl.js:
@@ -304,6 +337,9 @@ importers:
 
   playground:
     devDependencies:
+      '@actis/codemirror':
+        specifier: workspace:*
+        version: link:../package-integrations/codemirror
       simple-git:
         specifier: catalog:dev-tools
         version: 3.36.0

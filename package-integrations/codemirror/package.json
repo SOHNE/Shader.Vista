@@ -1,0 +1,68 @@
+{
+  "name": "@actis/codemirror",
+  "type": "module",
+  "version": "26.3.0",
+  "description": "Reusable CodeMirror extensions for editing Actis GLSL shaders.",
+  "author": "Leandro Peres <leandroperes@protonmail.com>",
+  "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SOHNE/Actis.git",
+    "directory": "package-integrations/codemirror"
+  },
+  "bugs": {
+    "url": "https://github.com/SOHNE/Actis/issues"
+  },
+  "keywords": [
+    "actis",
+    "codemirror",
+    "glsl",
+    "shader",
+    "webgl"
+  ],
+  "sideEffects": [
+    "./styles.css"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./styles.css": "./styles.css"
+  },
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.mts",
+  "files": [
+    "dist",
+    "styles.css"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "test": "echo \"No tests configured for @actis/codemirror\""
+  },
+  "peerDependencies": {
+    "@codemirror/autocomplete": "catalog:dev-tools",
+    "@codemirror/lang-cpp": "catalog:dev-tools",
+    "@codemirror/language": "catalog:dev-tools",
+    "@codemirror/lint": "catalog:dev-tools",
+    "@codemirror/state": "catalog:dev-tools",
+    "@codemirror/view": "catalog:dev-tools",
+    "@lezer/highlight": "catalog:dev-tools",
+    "codemirror": "catalog:dev-tools"
+  },
+  "devDependencies": {
+    "@codemirror/autocomplete": "catalog:dev-tools",
+    "@codemirror/lang-cpp": "catalog:dev-tools",
+    "@codemirror/language": "catalog:dev-tools",
+    "@codemirror/lint": "catalog:dev-tools",
+    "@codemirror/state": "catalog:dev-tools",
+    "@codemirror/view": "catalog:dev-tools",
+    "@lezer/highlight": "catalog:dev-tools",
+    "codemirror": "catalog:dev-tools",
+    "tsdown": "catalog:build",
+    "typescript": "catalog:typescript"
+  }
+}

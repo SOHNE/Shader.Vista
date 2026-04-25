@@ -12,6 +12,7 @@ shellEmulator: true
 
 packages:
   - 'packages-engine/*'
+  - 'package-integrations/*'
   - docs
   - playground
   - 'examples/*'

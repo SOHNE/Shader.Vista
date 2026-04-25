@@ -6,8 +6,8 @@
   "description": "Monorepo for Actis",
   "scripts": {
     "taze": "taze minor -wIr && pnpm -r --parallel run update-post",
-    "build": "pnpm -r --filter \"./packages-engine/**\" build",
-    "dev": "pnpm -r --filter \"./packages-engine/**\" dev",
+    "build": "pnpm -r --filter \"./packages-engine/**\" --filter \"./package-integrations/**\" build",
+    "dev": "pnpm -r --filter \"./packages-engine/**\" --filter \"./package-integrations/**\" dev",
     "docs": "pnpm -C docs run docs:dev",
     "play": "pnpm -C playground run dev",
     "test": "pnpm -r test",
