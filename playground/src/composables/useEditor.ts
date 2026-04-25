@@ -1,17 +1,8 @@
 import type { Ref } from 'vue'
-import { autocompletion } from '@codemirror/autocomplete'
-import { cpp } from '@codemirror/lang-cpp'
+import { glslEditorExtensions } from '@actis/codemirror'
 import { EditorState } from '@codemirror/state'
-import { EditorView, scrollPastEnd } from '@codemirror/view'
-import { basicSetup } from 'codemirror'
+import { EditorView } from '@codemirror/view'
 import { onMounted } from 'vue'
-import { nonMatchingBracketPlugin } from '../plugins/bracket-match'
-import { glslCompletions } from '../plugins/completions'
-import { codeFoldingExtension } from '../plugins/folding'
-import { scrollbarRuler, scrollbarRulerTheme } from '../plugins/scrollbar'
-import { selectionLineHighlightPlugin } from '../plugins/selection'
-import { vitesse } from '../plugins/theme'
-import { wordHighlightPlugin, wordHighlightTheme } from '../plugins/word-highlight'
 
 export function useEditor(
   container: Ref<HTMLDivElement | null>,
@@ -25,28 +16,7 @@ export function useEditor(
       view = new EditorView({
         state: EditorState.create({
           doc: initialValue,
-          extensions: [
-            basicSetup,
-            cpp(),
-            vitesse,
-            nonMatchingBracketPlugin,
-            wordHighlightTheme,
-            selectionLineHighlightPlugin,
-            wordHighlightPlugin,
-            scrollbarRuler,
-            scrollbarRulerTheme,
-            scrollPastEnd(),
-            codeFoldingExtension(),
-            autocompletion({
-              activateOnTyping: true,
-              override: [glslCompletions()],
-            }),
-            EditorView.updateListener.of((update) => {
-              if (update.docChanged) {
-                onChange(update.state.doc.toString())
-              }
-            }),
-          ],
+          extensions: glslEditorExtensions({ onChange }),
         }),
         parent: container.value,
       })
