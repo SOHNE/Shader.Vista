@@ -1,7 +1,7 @@
 {
   "name": "@actis/core",
   "type": "module",
-  "version": "26.3.0",
+  "version": "26.4.0",
   "description": "A versatile WebGL renderer designed with multipass support in mind.",
   "author": "Leandro Peres <leandroperes@protonmail.com>",
   "license": "GPL-3.0",
