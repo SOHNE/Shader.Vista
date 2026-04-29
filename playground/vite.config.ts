@@ -6,6 +6,7 @@ import Components from 'unplugin-vue-components/vite'
 import { defineConfig } from 'vite'
 import Inspect from 'vite-plugin-inspect'
 import { aliasEngine } from '../alias'
+import { actisCoreBundle } from './plugins/actisCoreBundle'
 
 const git = SimpleGit()
 
@@ -35,6 +36,7 @@ export default defineConfig({
     alias: aliasEngine,
   },
   plugins: [
+    actisCoreBundle(),
     Vue(),
     UnoCSS(),
     Inspect(),

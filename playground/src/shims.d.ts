@@ -2,6 +2,11 @@ declare const __SHA__: string
 declare const __LASTEST_TAG__: string
 declare const __LASTEST_TAG_SHA__: string
 
+declare module 'virtual:actis-core-bundle' {
+  const source: string
+  export default source
+}
+
 declare module '*.vue' {
   import type { DefineComponent } from 'vue'
 

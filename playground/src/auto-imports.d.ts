@@ -245,6 +245,7 @@ declare global {
   const useScroll: typeof import('@vueuse/core').useScroll
   const useScrollLock: typeof import('@vueuse/core').useScrollLock
   const useSessionStorage: typeof import('@vueuse/core').useSessionStorage
+  const useShaderExport: typeof import('./composables/useShaderExport').useShaderExport
   const useShare: typeof import('@vueuse/core').useShare
   const useSharing: typeof import('./composables/useSharing').useSharing
   const useSlots: typeof import('vue').useSlots
@@ -560,6 +561,7 @@ declare module 'vue' {
     readonly useScroll: UnwrapRef<typeof import('@vueuse/core')['useScroll']>
     readonly useScrollLock: UnwrapRef<typeof import('@vueuse/core')['useScrollLock']>
     readonly useSessionStorage: UnwrapRef<typeof import('@vueuse/core')['useSessionStorage']>
+    readonly useShaderExport: UnwrapRef<typeof import('./composables/useShaderExport')['useShaderExport']>
     readonly useShare: UnwrapRef<typeof import('@vueuse/core')['useShare']>
     readonly useSharing: UnwrapRef<typeof import('./composables/useSharing')['useSharing']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>

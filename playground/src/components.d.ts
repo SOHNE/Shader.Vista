@@ -16,6 +16,7 @@ declare module 'vue' {
     CodeMirror: typeof import('./components/Editor/CodeMirror.vue')['default']
     CollapsiblePanel: typeof import('./components/panel/CollapsiblePanel.vue')['default']
     ControlPanel: typeof import('./components/Preview/ControlPanel.vue')['default']
+    ExportShader: typeof import('./components/Header/ExportShader.vue')['default']
     FullscreenButton: typeof import('./components/Preview/FullscreenButton.vue')['default']
     Header: typeof import('./components/Header/Header.vue')['default']
     Index: typeof import('./components/Editor/TextureSelector/Index.vue')['default']

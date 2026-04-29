@@ -1,11 +1,14 @@
 <script setup lang="ts">
+import type { PassConfig } from '@actis/core'
 import Brand from './Brand.vue'
+import ExportShader from './ExportShader.vue'
 import Share from './Share.vue'
 import ThemeToggle from './ThemeToggle.vue'
 import VersionSelector from './VersionSelector.vue'
 
 defineProps<{
   code: string
+  passes: PassConfig[]
 }>()
 </script>
 
@@ -20,6 +23,7 @@ defineProps<{
 
     <div class="flex flex-shrink-0 gap-2 items-center sm:gap-3">
       <Share :code="code" />
+      <ExportShader :passes="passes" />
 
       <a
         i-carbon:document-multiple-01 icon-btn href="https://actisgl.netlify.app/" target="_blank"

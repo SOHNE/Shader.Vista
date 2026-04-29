@@ -188,7 +188,7 @@ function updatePassTextures(index: number, textures: string[]) {
           <Preview :code="code" />
         </Pane>
         <Pane :size="horizontal ? 60 : 50" class="flex flex-col min-h-0 min-w-0">
-          <Header :code="shareData" />
+          <Header :code="shareData" :passes="passes" />
           <div class="flex flex-1 flex-col min-h-0">
             <TabBar v-model:active-index="activePassIndex" :passes="passes" @add="addPass" @remove="removePass" />
 
